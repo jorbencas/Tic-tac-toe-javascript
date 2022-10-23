@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-        height: 55px;
+    height: 55px;
     width:755px;
     background-color: lightslategrey;
 }
@@ -13,7 +13,7 @@
     width:50%;
     font-size: 20px;
     color: white;
-         display: flex;
+    display: flex;
     justify-content: center;
     align-items: center;
 }
@@ -21,16 +21,15 @@
 .player img {
     max-width: 20px;
     max-height: 20px;
-        margin: 0px 2px;
-
+    margin: 0px 2px;
 }
 
 .content{
-width: 43%;
-height: 25px;
-display: flex;
-justify-content: center;
-align-items: center;
+    width: 43%;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .active {
@@ -38,10 +37,10 @@ align-items: center;
 }
 
 .tablero {
-      display: flex;
+    display: flex;
     justify-content: space-around;
     align-items: center;
-        height: 55px;
+    height: 55px;
     width:755px;
 }
 
@@ -49,13 +48,16 @@ align-items: center;
     /* display: flex;
     justify-content: center;
     align-items: center; */
+    table-layout: auto;
     width: 100%;
     height: 100%;
 }
 
 .cell {
-    font-size: 5px;
-    /* display: block; */
-       border: 1px solid lightskyblue;
-       background-color: indigo;
+    font-size: 25px;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid lightskyblue;
+    background-color: indigo;
 }
