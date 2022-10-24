@@ -4,43 +4,83 @@ let tableroHTML = document.getElementById("tablero");
 let msg = "";
 let win = 3;
 let tablero;
-let p = "";
+
 resetearTablero();
 
 function createTablero(rows, cells) {
   return Array.from({ length: rows }, (_, i) =>
-    Array.from({ length: cells }, (_, i) => 0)
+    Array.from({ length: cells }, (_, i) => "")
   );
 }
 
 function isFinJuego(x, y) {
+  /*Todas las functiones de validar, 
+  se aplican desde la posicion 0,0 
+  del tablero*/
   let fin = false;
-  //vertical
+  fin = ganaVertical(false, y);
+  fin = ganaHorizontal(false, x);
+  fin = ganaDiagonalPrincipioaUltimo(false);
+  fin = ganaDiagonalUltimoaPrincipio(false);
+  fin = empate(false);
+  return fin;
+}
+
+function ganaVertical(fin, y) {
   if (tablero[y].filter((f) => f === 1).length === win) {
     fin = true;
     msg = "ganas";
+  } else if (tablero[y].filter((f) => f === 2).length === win) {
+    fin = true;
+    msg = "pierdes";
   }
-  if (!fin) {
-    if (tablero[y].filter((f) => f === 2).length === win) {
-      fin = true;
-      msg = "pierdes";
-    }
+  return fin;
+}
+
+function ganaHorizontal(fin, x) {
+  if (!fin && tablero.filter((e) => e[x] === 1).length == win) {
+    fin = true;
+    msg = "ganas";
+  } else if (!fin && tablero.filter((e) => e[x] === 2).length == win) {
+    fin = true;
+    msg = "pierdes";
   }
+  return fin;
+}
 
-  //horizontal
-  if (!fin) {
-    if(tablero.filter((e) => e[x] === 1).length == win ) {
-      fin = true;
-      msg = "ganas";
-    }
-
-    if(tablero.filter((e) => e[x] === 2).length == win ) {
-      fin = true;
-      msg = "pierdes";
-    }
+function ganaDiagonalPrincipioaUltimo(fin) {
+  if (!fin && tablero.filter((_, j) => tablero[j][j] == 1).length == win) {
+    fin = true;
+    msg = "ganas";
+  } else if (
+    !fin &&
+    tablero.filter((_, j) => tablero[j][j] == 2).length == win
+  ) {
+    fin = true;
+    msg = "pierdes";
   }
+  return fin;
+}
 
-  //todos
+function ganaDiagonalUltimoaPrincipio(fin) {
+  let last = tablero.length - 1;
+  if (
+    !fin &&
+    tablero.filter((_, i) => tablero[i][last - i] == 1).length == win
+  ) {
+    fin = true;
+    msg = "ganas";
+  } else if (
+    !fin &&
+    tablero.filter((_, i) => tablero[i][last - i] == 2).length == win
+  ) {
+    fin = true;
+    msg = "pierdes";
+  }
+  return fin;
+}
+
+function empate(fin) {
   if (
     !fin &&
     tablero.filter((e) => e.filter((f) => f > 0).length == win).length == win
@@ -48,61 +88,29 @@ function isFinJuego(x, y) {
     fin = true;
     msg = "empate";
   }
-
-  // diagonal izquierda
-  if (!fin) {
-    if(tablero.filter((e, j) => tablero[j][j] == 1).length == win ) {
-      fin = true;
-      msg = "ganas";
-    }
-
-    if(tablero.filter((e, j) => tablero[j][j] == 2).length == win ) {
-      fin = true;
-      msg = "pierdes";
-    }
-  }
-  // diagonal derecha
-  if (!fin) {
-    let xarr = [];
-    let yarr = [];
-    tablero[0].forEach((f, j) => {
-      if (tablero[tablero.length - j][tablero.length - j] == 1) {
-        xarr.push(f);
-      } else if (tablero[tablero.length - j][tablero.length - j] == 2) {
-        yarr.push(f);
-      }
-    });
-
-    if (xarr.length == win) {
-      fin = true;
-      msg = "ganas";
-    } else if (yarr.length == win) {
-      fin = true;
-      msg = "pierdes";
-    }
-  }
   return fin;
 }
 
-function resetearTablero(p = "") {
+function resetearTablero() {
   tablero = createTablero(win, win);
-  tablero.forEach((e, y) => {
-    p += ` 
-    <div class='row'>`;
-    e.forEach((f, x) => {
-      p += `
+  tableroHTML.innerHTML = tablero
+    .map((e, y) => {
+      return (
+        `<div class='row'>` +
+        e
+          .map((f, x) => {
+            return `
       <div class='cell' id='${y}-${x}' onclick='jugar(${x},${y})'>${f}</div>`;
-    });
-    p += `</div>`;
-  });
-
-  tableroHTML.innerHTML = p;
+          })
+          .join("") +
+        `</div>`
+      );
+    })
+    .join("");
 }
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
+function canbiarTurno(h = jugadorActivo) {
+  jugadorActivo = h === 1 ? 2 : 1;
 }
 
 function jugar(x, y) {
@@ -114,15 +122,6 @@ function jugar(x, y) {
     tablero[y][x] = jugadorActivo;
     canbiarTurno();
     document.getElementById(jugadorActivo).classList.add("active");
-    // if (jugadorActivo == 2) {
-    //   do {
-    //     x = getRandomInt(0, 3);
-    //     y = getRandomInt(0, 3);
-    //   } while (tablero[y][x] == 0);
-    //   console.log("y" + y + "x" + x);
-    //   jugar(x, y);
-    // }
-
     if (isFinJuego(x, y)) {
       document.getElementById("message").innerText = `${msg}!!!`;
       document.getElementById("message").classList.add(msg);
@@ -139,6 +138,18 @@ function jugar(x, y) {
   }
 }
 
-function canbiarTurno(h = jugadorActivo) {
-  jugadorActivo = h === 1 ? 2 : 1;
-}
+// function selectTablero(i) {
+//   tableroHTML.setAttribute("display", "flex");
+//   document.getElementById("message").setAttribute("display", "block");
+//   document.getElementById("info").setAttribute("display", "flex");
+//   document.getElementById("select").setAttribute("display", "none");
+//   win = i;
+//   //resetearTablero();
+// }
+
+// function hideTablero() {
+//   tableroHTML.setAttribute("display", "none");
+//   document.getElementById("message").setAttribute("display", "none");
+//   document.getElementById("info").setAttribute("display", "none");
+//   document.getElementById("select").setAttribute("display", "block");
+// }

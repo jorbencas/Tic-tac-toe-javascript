@@ -3,6 +3,7 @@ h1 {
 }
 
 .message{
+    /* display: none; selecionar tabla */
     max-width:755px;
     padding: 15px;
     margin: 5px auto;
@@ -24,6 +25,7 @@ h1 {
 
 .info {
     margin: auto;
+    /* display: none; selecionar tabla*/
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -49,12 +51,32 @@ h1 {
     margin: 0px 2px;
 }
 
-.content{
-    width: 43%;
-    height: 25px;
+/* .select{
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: row;
+    width: 90%;
+    height: 90%;
+}
+
+.content{
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.select .content img {
+    width: 100px;
+    height: 100px;
+    padding-right: 2px;
+} */
+
+.content img {
+    width:25px;
+    height:25px;
 }
 
 .active {
@@ -63,7 +85,8 @@ h1 {
 
 .tablero {
     margin: auto;
-    display: flex;
+    /* display: none; selecionar tabla*/
+     display: flex;
     justify-content: space-around;
     align-items: center;
     height: 55px;
@@ -79,7 +102,19 @@ h1 {
     font-size: 25px;
     color: white;
     text-align: center;
-    padding: 5px;
-    border: 1px solid lightskyblue;
+    border: 1px solid white;
+    border-top: 0;
     background-color: indigo;
+    min-height: 100px;
+    min-width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.cell img {
+
+     max-width: 75px;
+    max-height: 75px;
 }
