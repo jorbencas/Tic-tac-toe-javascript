@@ -3,14 +3,15 @@ let jugadorActivo = 1;
 let tableroHTML = document.getElementById("tablero");
 let msg = "";
 let win = 3;
+let tablero;
+let p = "";
+resetearTablero();
+
 function createTablero(rows, cells) {
   return Array.from({ length: rows }, (_, i) =>
     Array.from({ length: cells }, (_, i) => 0)
   );
 }
-let tablero = createTablero(3, 3);
-let p = "";
-resetearTablero();
 
 function isFinJuego(x, y) {
   let fin = false;
@@ -25,22 +26,15 @@ function isFinJuego(x, y) {
       msg = "pierdes";
     }
   }
+
   //horizontal
   if (!fin) {
-    let xarr = [];
-    let yarr = [];
-    tablero.forEach((e) => {
-      if (e[x] === 1) {
-        xarr.push(e[x]);
-      } else if (e[x] === 2) {
-        yarr.push(e[x]);
-      }
-    });
-
-    if (xarr.length == win) {
+    if(tablero.filter((e) => e[x] === 1).length == win ) {
       fin = true;
       msg = "ganas";
-    } else if (yarr.length == win) {
+    }
+
+    if(tablero.filter((e) => e[x] === 2).length == win ) {
       fin = true;
       msg = "pierdes";
     }
@@ -57,19 +51,12 @@ function isFinJuego(x, y) {
 
   // diagonal izquierda
   if (!fin) {
-    let xarr = [];
-    let yarr = [];
-    tablero[0].forEach((f, j) => {
-      if (tablero[j][j] == 1) {
-        xarr.push(f);
-      } else if (tablero[j][j] == 2) {
-        yarr.push(f);
-      }
-    });
-    if (xarr.length == win) {
+    if(tablero.filter((e, j) => tablero[j][j] == 1).length == win ) {
       fin = true;
       msg = "ganas";
-    } else if (yarr.length == win) {
+    }
+
+    if(tablero.filter((e, j) => tablero[j][j] == 2).length == win ) {
       fin = true;
       msg = "pierdes";
     }
@@ -78,11 +65,10 @@ function isFinJuego(x, y) {
   if (!fin) {
     let xarr = [];
     let yarr = [];
-    tablero[tablero.length - 1].forEach((f, j) => {
-      let last = j < tablero.length - 1 ? tablero.length - 1 : 0;
-      if (tablero[last][last] == 1) {
+    tablero[0].forEach((f, j) => {
+      if (tablero[tablero.length - j][tablero.length - j] == 1) {
         xarr.push(f);
-      } else if (tablero[last][last] == 2) {
+      } else if (tablero[tablero.length - j][tablero.length - j] == 2) {
         yarr.push(f);
       }
     });
@@ -99,17 +85,13 @@ function isFinJuego(x, y) {
 }
 
 function resetearTablero(p = "") {
-  tablero = createTablero(3, 3);
+  tablero = createTablero(win, win);
   tablero.forEach((e, y) => {
     p += ` 
     <div class='row'>`;
     e.forEach((f, x) => {
-      let content =
-        f > 0
-          ? `<img src="${jugadores[jugadorActivo]}.svg" alt="Jugador ${jugadorActivo}">`
-          : f;
       p += `
-      <div class='cell' id='${y}-${x}' onclick='jugar(${x},${y})'>${content}</div>`;
+      <div class='cell' id='${y}-${x}' onclick='jugar(${x},${y})'>${f}</div>`;
     });
     p += `</div>`;
   });
