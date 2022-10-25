@@ -12,21 +12,14 @@ function createTablero(rows, cells) {
     Array.from({ length: cells }, (_, i) => "")
   );
 }
-
-function isFinJuego(x, y) {
-  /*Todas las functiones de validar, 
-  se aplican desde la posicion 0,0 
-  del tablero*/
+  /*
+    Todas las functiones de "esFinpor", se aplican 
+    desde la posicion 0,0 del tablero y luego de 
+    izquierda a derecha
+  */
+  
+function esFinporVertical(y) {
   let fin = false;
-  fin = ganaVertical(false, y);
-  fin = ganaHorizontal(false, x);
-  fin = ganaDiagonalPrincipioaUltimo(false);
-  fin = ganaDiagonalUltimoaPrincipio(false);
-  fin = empate(false);
-  return fin;
-}
-
-function ganaVertical(fin, y) {
   if (tablero[y].filter((f) => f === 1).length === win) {
     fin = true;
     msg = "ganas";
@@ -37,23 +30,24 @@ function ganaVertical(fin, y) {
   return fin;
 }
 
-function ganaHorizontal(fin, x) {
-  if (!fin && tablero.filter((e) => e[x] === 1).length == win) {
+function esFinporHorizontal(x) {
+  let fin = false;
+  if (tablero.filter((e) => e[x] === 1).length == win) {
     fin = true;
     msg = "ganas";
-  } else if (!fin && tablero.filter((e) => e[x] === 2).length == win) {
+  } else if (tablero.filter((e) => e[x] === 2).length == win) {
     fin = true;
     msg = "pierdes";
   }
   return fin;
 }
 
-function ganaDiagonalPrincipioaUltimo(fin) {
-  if (!fin && tablero.filter((_, j) => tablero[j][j] == 1).length == win) {
+function esFinporDiagonalDescendente() {
+  let fin = false;
+  if (tablero.filter((_, j) => tablero[j][j] == 1).length == win) {
     fin = true;
     msg = "ganas";
   } else if (
-    !fin &&
     tablero.filter((_, j) => tablero[j][j] == 2).length == win
   ) {
     fin = true;
@@ -62,16 +56,15 @@ function ganaDiagonalPrincipioaUltimo(fin) {
   return fin;
 }
 
-function ganaDiagonalUltimoaPrincipio(fin) {
+function esFinporDiagonalAscendente() {
+  let fin = false;
   let last = tablero.length - 1;
   if (
-    !fin &&
     tablero.filter((_, i) => tablero[i][last - i] == 1).length == win
   ) {
     fin = true;
     msg = "ganas";
   } else if (
-    !fin &&
     tablero.filter((_, i) => tablero[i][last - i] == 2).length == win
   ) {
     fin = true;
@@ -80,9 +73,9 @@ function ganaDiagonalUltimoaPrincipio(fin) {
   return fin;
 }
 
-function empate(fin) {
+function esFinporEmpate() {
+  let fin = false;
   if (
-    !fin &&
     tablero.filter((e) => e.filter((f) => f > 0).length == win).length == win
   ) {
     fin = true;
@@ -115,17 +108,17 @@ function canbiarTurno(h = jugadorActivo) {
 
 function jugar(x, y) {
   if (tablero[y][x] == 0) {
-    document.getElementById(jugadorActivo).classList.remove("active");
     document.getElementById(
       y + "-" + x
     ).innerHTML = `<img src="${jugadores[jugadorActivo]}.svg" alt="Jugador ${jugadorActivo}">`;
     tablero[y][x] = jugadorActivo;
-    canbiarTurno();
-    document.getElementById(jugadorActivo).classList.add("active");
-    if (isFinJuego(x, y)) {
+   
+    if (
+    esFinporVertical(y) || esFinporHorizontal(x) || esFinporDiagonalDescendente() 
+    || esFinporDiagonalAscendente() || esFinporEmpate()
+    ) {
       document.getElementById("message").innerText = `${msg}!!!`;
       document.getElementById("message").classList.add(msg);
-
       setTimeout(() => {
         document.getElementById(jugadorActivo).classList.remove("active");
         document.getElementById("message").innerText = ``;
@@ -134,6 +127,10 @@ function jugar(x, y) {
         resetearTablero();
         document.getElementById(jugadorActivo).classList.add("active");
       }, 2000);
+    } else {
+      document.getElementById(jugadorActivo).classList.remove("active");
+      canbiarTurno();
+      document.getElementById(jugadorActivo).classList.add("active");
     }
   }
 }
