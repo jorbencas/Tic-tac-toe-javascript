@@ -1,8 +1,10 @@
-let jugadores = { 1: "cross", 2: `circle` };
+let jugadores = {
+  1: { icon: "cross", state: `` },
+  2: { icon: "circle", state: `` },
+};
 let jugadorActivo = 1;
 let tableroHTML = document.getElementById("tablero");
-let msg = "";
-let win = 3;
+let win = 6;
 let tablero;
 
 resetearTablero();
@@ -12,20 +14,22 @@ function createTablero(rows, cells) {
     Array.from({ length: cells }, (_, i) => "")
   );
 }
-  /*
+/*
     Todas las functiones de "esFinpor", se aplican 
     desde la posicion 0,0 del tablero y luego de 
     izquierda a derecha
   */
-  
+
 function esFinporVertical(y) {
   let fin = false;
   if (tablero[y].filter((f) => f === 1).length === win) {
     fin = true;
-    msg = "ganas";
+    jugadores[1].state = "ganas";
+    jugadores[2].state = "pierdes";
   } else if (tablero[y].filter((f) => f === 2).length === win) {
     fin = true;
-    msg = "pierdes";
+    jugadores[1].state = "pierdes";
+    jugadores[2].state = "ganas";
   }
   return fin;
 }
@@ -34,10 +38,12 @@ function esFinporHorizontal(x) {
   let fin = false;
   if (tablero.filter((e) => e[x] === 1).length == win) {
     fin = true;
-    msg = "ganas";
+    jugadores[1].state = "ganas";
+    jugadores[2].state = "pierdes";
   } else if (tablero.filter((e) => e[x] === 2).length == win) {
     fin = true;
-    msg = "pierdes";
+    jugadores[1].state = "pierdes";
+    jugadores[2].state = "ganas";
   }
   return fin;
 }
@@ -46,12 +52,12 @@ function esFinporDiagonalDescendente() {
   let fin = false;
   if (tablero.filter((_, j) => tablero[j][j] == 1).length == win) {
     fin = true;
-    msg = "ganas";
-  } else if (
-    tablero.filter((_, j) => tablero[j][j] == 2).length == win
-  ) {
+    jugadores[1].state = "ganas";
+    jugadores[2].state = "pierdes";
+  } else if (tablero.filter((_, j) => tablero[j][j] == 2).length == win) {
     fin = true;
-    msg = "pierdes";
+    jugadores[1].state = "pierdes";
+    jugadores[2].state = "ganas";
   }
   return fin;
 }
@@ -59,16 +65,16 @@ function esFinporDiagonalDescendente() {
 function esFinporDiagonalAscendente() {
   let fin = false;
   let last = tablero.length - 1;
-  if (
-    tablero.filter((_, i) => tablero[i][last - i] == 1).length == win
-  ) {
+  if (tablero.filter((_, i) => tablero[i][last - i] == 1).length == win) {
     fin = true;
-    msg = "ganas";
+    jugadores[1].state = "ganas";
+    jugadores[2].state = "pierdes";
   } else if (
     tablero.filter((_, i) => tablero[i][last - i] == 2).length == win
   ) {
     fin = true;
-    msg = "pierdes";
+    jugadores[1].state = "pierdes";
+    jugadores[2].state = "ganas";
   }
   return fin;
 }
@@ -79,7 +85,8 @@ function esFinporEmpate() {
     tablero.filter((e) => e.filter((f) => f > 0).length == win).length == win
   ) {
     fin = true;
-    msg = "empate";
+    jugadores[1].state = "empate";
+    jugadores[2].state = "empate";
   }
   return fin;
 }
@@ -110,19 +117,32 @@ function jugar(x, y) {
   if (tablero[y][x] == 0) {
     document.getElementById(
       y + "-" + x
-    ).innerHTML = `<img src="${jugadores[jugadorActivo]}.svg" alt="Jugador ${jugadorActivo}">`;
+    ).innerHTML = `<img src="${jugadores[jugadorActivo].icon}.svg" alt="Jugador ${jugadorActivo}">`;
     tablero[y][x] = jugadorActivo;
-   
+
     if (
-    esFinporVertical(y) || esFinporHorizontal(x) || esFinporDiagonalDescendente() 
-    || esFinporDiagonalAscendente() || esFinporEmpate()
+      esFinporVertical(y) ||
+      esFinporHorizontal(x) ||
+      esFinporDiagonalDescendente() ||
+      esFinporDiagonalAscendente() ||
+      esFinporEmpate()
     ) {
-      document.getElementById("message").innerText = `${msg}!!!`;
-      document.getElementById("message").classList.add(msg);
+      document.getElementById(jugadorActivo).classList.remove("active");
+      document.querySelector("div[id^='1'] .message").innerText =
+        jugadores[1].state.toUpperCase();
+      document.querySelector("div[id^='2'] .message").innerText =
+        jugadores[2].state.toUpperCase();
+      document.querySelector("div[id^='1']").classList.add(jugadores[1].state);
+      document.querySelector("div[id^='2']").classList.add(jugadores[2].state);
       setTimeout(() => {
-        document.getElementById(jugadorActivo).classList.remove("active");
-        document.getElementById("message").innerText = ``;
-        document.getElementById("message").classList.remove(msg);
+        document.querySelector("div[id^='1'] .message").innerText = "";
+        document.querySelector("div[id^='2'] .message").innerText = "";
+        document
+          .querySelector("div[id^='1']")
+          .classList.remove(jugadores[1].state);
+        document
+          .querySelector("div[id^='2']")
+          .classList.remove(jugadores[2].state);
         canbiarTurno(2);
         resetearTablero();
         document.getElementById(jugadorActivo).classList.add("active");
@@ -134,19 +154,3 @@ function jugar(x, y) {
     }
   }
 }
-
-// function selectTablero(i) {
-//   tableroHTML.setAttribute("display", "flex");
-//   document.getElementById("message").setAttribute("display", "block");
-//   document.getElementById("info").setAttribute("display", "flex");
-//   document.getElementById("select").setAttribute("display", "none");
-//   win = i;
-//   //resetearTablero();
-// }
-
-// function hideTablero() {
-//   tableroHTML.setAttribute("display", "none");
-//   document.getElementById("message").setAttribute("display", "none");
-//   document.getElementById("info").setAttribute("display", "none");
-//   document.getElementById("select").setAttribute("display", "block");
-// }

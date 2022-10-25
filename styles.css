@@ -3,37 +3,38 @@ h1 {
 }
 
 .message{
-    /* display: none; selecionar tabla */
-    max-width:755px;
-    padding: 15px;
-    margin: 5px auto;
+    font-size: 28px;
     text-align: center;
     color: white;
 }
 
-.message.ganas{
+.ganas img,
+.pierdes img,
+.empate img {
+    padding-right: 5px;
+}
+
+.ganas{
     background-color: mediumseagreen;
 }
 
-.message.pierdes{
+.pierdes{
     background-color: mediumvioletred;
 }
 
-.message.empate{
+.empate{
     background-color: mediumturquoise;
 }
 
 .info {
     margin: auto;
-    /* display: none; selecionar tabla*/
     display: flex;
     justify-content: space-around;
     align-items: center;
     height: 55px;
     width:755px;
-    background-color: lightslategrey;
+    background-color: rgb(139, 148, 146);
 }
-
 
 .player {
     height: 100%;
@@ -51,42 +52,19 @@ h1 {
     margin: 0px 2px;
 }
 
-/* .select{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-    width: 90%;
-    height: 90%;
-}
-
-.content{
-    width: 25px;
-    height: 25px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-.select .content img {
-    width: 100px;
-    height: 100px;
-    padding-right: 2px;
-} */
-
 .content img {
     width:25px;
     height:25px;
 }
 
-.active {
-    background-color: indigo;
+.active,
+.cell {
+    background-color: rgb(40, 92, 122);
 }
 
 .tablero {
     margin: auto;
-    /* display: none; selecionar tabla*/
-     display: flex;
+    display: flex;
     justify-content: space-around;
     align-items: center;
     height: 55px;
@@ -104,7 +82,6 @@ h1 {
     text-align: center;
     border: 1px solid white;
     border-top: 0;
-    background-color: indigo;
     min-height: 100px;
     min-width: 30px;
     display: flex;
@@ -112,9 +89,12 @@ h1 {
     align-items: center;
 }
 
+.cell:hover {
+    background-color: rgb(63, 70, 76);
+    cursor: pointer;
+}
 
 .cell img {
-
-     max-width: 75px;
+    max-width: 75px;
     max-height: 75px;
 }
