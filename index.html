@@ -9,8 +9,20 @@
 </head>
 <body>
     <h1>3 en raya</h1>
+
+    <select onchange="changeMultiplayer(event)" id="multiplayer">
+        <option value="1">SinglePlayer</option>
+        <option value="2">MultiPlayer</option>
+    </select>
+    
+    <div class="options" id="options">
+       
+    </div>
+
+
+
     <div id="info" class="info">
-        <div id='1'class="player active">
+        <div id='1' class="player active">
             <img src="cross.svg" alt="Jugador 1" >
             <div class="message"></div>
         </div>
