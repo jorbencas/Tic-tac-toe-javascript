@@ -8,23 +8,19 @@ let players = {
 };
 let activePlayer = 1;
 let board;
-let multiplayer = 1;
 let playState = {
   numPlays: 3,
+  multiplayer: 1
 };
 function changeMultiplayer(e) {
-  multiplayer = parseInt(e.currentTarget.value);
-  if (multiplayer == 2) {
+  dispatch('CHANGE_MULTIPLAYER',parseInt(e.currentTarget.value));
+  if (playState.multiplayer == 2) {
     $id("options").innerHTML = `
      <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,1)' id="nombreJugador" value=''>
       <label for="nombreJugador">Nombre del jugador 1</label>
       
-      
-      
       <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,2)' id="nombreJugador" value=''>
       <label for="nombreJugador">Nombre del jugador 3</label>
-      
-      
       `;
   } else {
     $id("options").innerHTML = "";
@@ -135,9 +131,6 @@ function resetBoard() {
 }
 
 function changeTurn(h = activePlayer) {
-  if (h !== 1 && multiplayer) {
-    dispatch('ADD_NUM_MOVES','',h);
-  }
   activePlayer = h === 1 ? 2 : 1;
 }
 
@@ -162,11 +155,10 @@ function play(x, y) {
       $("div[id^='1']").classList.add(players[1].state);
       $("div[id^='2']").classList.add(players[2].state);
       setTimeout(() => {
-        
-        if(multiplayer == 2){
-          dispatch('ADD_NUM_WINS',);
-          dispatch('ADD_NUM_LOSTS',);
-
+        if(playState.multiplayer == 2){
+          dispatch('ADD_NUM_WINS');
+          let numPlayer = players[1].state == "ganas" ? 2 : 1;
+          dispatch('ADD_NUM_LOSTS','',numPlayer);
         }
         $("div[id^='1'] .message").innerText = "";
         $("div[id^='2'] .message").innerText = "";
@@ -174,13 +166,16 @@ function play(x, y) {
         $("div[id^='2']").classList.remove(players[2].state);
         changeTurn(2);
         resetBoard();
-        resetPlayeState();
+        dispatch('RESET_PLAYSTATE');
         $id(activePlayer).classList.add("active");
       }, 2000);
     } else {
       $("div[id^='" + activePlayer + "'] .message").innerText =
         players[activePlayer].name;
       $id(activePlayer).classList.remove("active");
+      if (playState.multiplayer) {
+        dispatch('ADD_NUM_MOVES');
+      }
       changeTurn();
       $id(activePlayer).classList.add("active");
     }
@@ -188,7 +183,6 @@ function play(x, y) {
 }
 
 resetBoard();
-
 
 function dispatch(action, value = '', player = activePlayer){
   if(action == 'ADD_NUM_WINS'){
@@ -201,6 +195,13 @@ function dispatch(action, value = '', player = activePlayer){
     playState.numPlays--;
   } else if(action == 'SET_NAME_PLAYER'){
     players[player].name = value;
+  } else if(action == 'RESET_PLAYSTATE'){
+    players = {
+      1: { icon: "cross", state: ``, name: "", moves: 0, numWins: 0, numLost: 0 },
+      2: { icon: "circle", state: ``, name: "", moves: 0, numWins: 0, numLost: 0 },
+    }
+  } else if(action = 'CHANGE_MULTIPLAYER'){
+    playState.multiplayer = value;
   }
 }
 
