@@ -43,7 +43,7 @@ function nextPlay(){
   }
   playState.board.forEach((e,i) => {
     e.forEach((c,j) => {
-      if(c > 0){
+      if(c > 0 && position.row == 0 && position.cell == 0){
         position.row = i;
         position.cell = j;
       }
@@ -179,13 +179,13 @@ function play(x, y) {
       $("div[id^='" + playState.activePlayer + "'] .message").innerText =
         players[playState.activePlayer].name;
       $id(playState.activePlayer).classList.remove("active");
+      dispatch('CHANGE_TURN');
       if (playState.multiplayer == 2) {
         dispatch('ADD_NUM_MOVES');
-      } else if(playState.multiplayer == 1){
+      } else if(playState.multiplayer == 1 && playState.activePlayer == 2){
         const {row, cell} = nextPlay();
         play(row, cell);
       }
-      dispatch('CHANGE_TURN');
       $id(playState.activePlayer).classList.add("active");
     }
   }
