@@ -6,27 +6,29 @@ let players = {
   1: { icon: "cross", state: ``, name: "", moves: 0, numWins: 0, numLost: 0 },
   2: { icon: "circle", state: ``, name: "", moves: 0, numWins: 0, numLost: 0 },
 };
-let activePlayer = 1;
-let board;
 let playState = {
   numPlays: 3,
-  multiplayer: 1
+  multiplayer: 1,
+  activePlayer: 1,
+  board: [],
 };
-function changeMultiplayer(e) {
-  dispatch('CHANGE_MULTIPLAYER',parseInt(e.currentTarget.value));
-  if (playState.multiplayer == 2) {
-    $id("options").innerHTML = `
-     <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,1)' id="nombreJugador" value=''>
-      <label for="nombreJugador">Nombre del jugador 1</label>
-      
-      <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,2)' id="nombreJugador" value=''>
-      <label for="nombreJugador">Nombre del jugador 3</label>
-      `;
-  } else {
-    $id("options").innerHTML = "";
-    changeNameMultiPlayer('',1);
-    changeNameMultiPlayer('',2);
 
+function changeMultiplayer(e) {
+  if(playState.numPlays === 3){
+    dispatch('CHANGE_MULTIPLAYER',parseInt(e.currentTarget.value));
+    if (playState.multiplayer == 2) {
+      $id("options").innerHTML = `
+      <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,1)' id="nombreJugador" value=''>
+        <label for="nombreJugador">Nombre del jugador 1</label>
+        
+        <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,2)' id="nombreJugador" value=''>
+        <label for="nombreJugador">Nombre del jugador 3</label>
+        `;
+    } else {
+      $id("options").innerHTML = "";
+      changeNameMultiPlayer('',1);
+      changeNameMultiPlayer('',2);
+    }
   }
 }
 
@@ -34,10 +36,20 @@ function changeNameMultiPlayer(namePlayer = "", player) {
   dispatch('SET_NAME_PLAYER', namePlayer,player);
 }
 
-function createBoard(rows, cells) {
-  return Array.from({ length: rows }, (_, i) =>
-    Array.from({ length: cells }, (_, i) => "")
-  );
+function nextPlay(){
+  let position = {
+    cell:0,
+    row:0
+  }
+  playState.board.forEach((e,i) => {
+    e.forEach((c,j) => {
+      if(c > 0){
+        position.row = i;
+        position.cell = j;
+      }
+    })
+  })
+  return position;
 }
 /*
     Todas las functiones de "isEndBy", se aplican 
@@ -47,11 +59,11 @@ function createBoard(rows, cells) {
 
 function isEndByVertical(y) {
   let end = false;
-  if (board[y].filter((f) => f === 1).length === win) {
+  if (playState.board[y].filter((f) => f === 1).length === win) {
     end = true;
     players[1].state = "ganas";
     players[2].state = "pierdes";
-  } else if (board[y].filter((f) => f === 2).length === win) {
+  } else if (playState.board[y].filter((f) => f === 2).length === win) {
     end = true;
     players[1].state = "pierdes";
     players[2].state = "ganas";
@@ -61,11 +73,11 @@ function isEndByVertical(y) {
 
 function isEndByHorizontal(x) {
   let end = false;
-  if (board.filter((e) => e[x] === 1).length == win) {
+  if (playState.board.filter((e) => e[x] === 1).length == win) {
     end = true;
     players[1].state = "ganas";
     players[2].state = "pierdes";
-  } else if (board.filter((e) => e[x] === 2).length == win) {
+  } else if (playState.board.filter((e) => e[x] === 2).length == win) {
     end = true;
     players[1].state = "pierdes";
     players[2].state = "ganas";
@@ -75,11 +87,11 @@ function isEndByHorizontal(x) {
 
 function isEndByDiagonalFalling() {
   let end = false;
-  if (board.filter((_, j) => board[j][j] == 1).length == win) {
+  if (playState.board.filter((_, j) => playState.board[j][j] == 1).length == win) {
     end = true;
     players[1].state = "ganas";
     players[2].state = "pierdes";
-  } else if (board.filter((_, j) => board[j][j] == 2).length == win) {
+  } else if (playState.board.filter((_, j) => playState.board[j][j] == 2).length == win) {
     end = true;
     players[1].state = "pierdes";
     players[2].state = "ganas";
@@ -89,12 +101,12 @@ function isEndByDiagonalFalling() {
 
 function isEndByDiagonalUpward() {
   let end = false;
-  let last = board.length - 1;
-  if (board.filter((_, i) => board[i][last - i] == 1).length == win) {
+  let last = playState.board.length - 1;
+  if (playState.board.filter((_, i) => playState.board[i][last - i] == 1).length == win) {
     end = true;
     players[1].state = "ganas";
     players[2].state = "pierdes";
-  } else if (board.filter((_, i) => board[i][last - i] == 2).length == win) {
+  } else if (playState.board.filter((_, i) => playState.board[i][last - i] == 2).length == win) {
     end = true;
     players[1].state = "pierdes";
     players[2].state = "ganas";
@@ -104,7 +116,7 @@ function isEndByDiagonalUpward() {
 
 function isEndByTie() {
   let end = false;
-  if (board.filter((e) => e.filter((f) => f > 0).length == win).length == win) {
+  if (playState.board.filter((e) => e.filter((f) => f > 0).length == win).length == win) {
     end = true;
     players[1].state = "empate";
     players[2].state = "empate";
@@ -113,9 +125,8 @@ function isEndByTie() {
 }
 
 function resetBoard() {
-  board = createBoard(win, win);
-  tableroHTML.innerHTML = board
-    .map((e, y) => {
+  dispatch('CREATE_BOARD', {rows:win, cells:win});
+  tableroHTML.innerHTML = playState.board.map((e, y) => {
       return (
         `<div class='row'>` +
         e
@@ -130,16 +141,12 @@ function resetBoard() {
     .join("");
 }
 
-function changeTurn(h = activePlayer) {
-  activePlayer = h === 1 ? 2 : 1;
-}
-
 function play(x, y) {
-  if (board[y][x] == 0 && playState.numPlays > 0) {
+  if (playState.board[y][x] == 0 && playState.numPlays > 0) {
     $id(
       y + "-" + x
-    ).innerHTML = `<img src="${players[activePlayer].icon}.svg" alt="Jugador ${activePlayer}">`;
-    board[y][x] = activePlayer;
+    ).innerHTML = `<img src="${players[playState.activePlayer].icon}.svg" alt="Jugador ${activePlayer}">`;
+    playState.board[y][x] = playState.activePlayer;
 
     if (
       isEndByVertical(y) ||
@@ -148,43 +155,43 @@ function play(x, y) {
       isEndByDiagonalUpward() ||
       isEndByTie()
     ) {
-    
-      $id(activePlayer).classList.remove("active");
+      if(playState.multiplayer == 2){
+        dispatch('ADD_NUM_WINS');
+        let numPlayer = players[1].state == "ganas" ? 2 : 1;
+        dispatch('ADD_NUM_LOSTS','',numPlayer);
+      }
+      $id(playState.activePlayer).classList.remove("active");
       $("div[id^='1'] .message").innerText = players[1].state.toUpperCase();
       $("div[id^='2'] .message").innerText = players[2].state.toUpperCase();
       $("div[id^='1']").classList.add(players[1].state);
       $("div[id^='2']").classList.add(players[2].state);
       setTimeout(() => {
-        if(playState.multiplayer == 2){
-          dispatch('ADD_NUM_WINS');
-          let numPlayer = players[1].state == "ganas" ? 2 : 1;
-          dispatch('ADD_NUM_LOSTS','',numPlayer);
-        }
         $("div[id^='1'] .message").innerText = "";
         $("div[id^='2'] .message").innerText = "";
         $("div[id^='1']").classList.remove(players[1].state);
         $("div[id^='2']").classList.remove(players[2].state);
-        changeTurn(2);
+        dispatch('CHANGE_TURN',2);
         resetBoard();
         dispatch('RESET_PLAYSTATE');
-        $id(activePlayer).classList.add("active");
+        $id(playState.activePlayer).classList.add("active");
       }, 2000);
     } else {
-      $("div[id^='" + activePlayer + "'] .message").innerText =
-        players[activePlayer].name;
-      $id(activePlayer).classList.remove("active");
-      if (playState.multiplayer) {
+      $("div[id^='" + playState.activePlayer + "'] .message").innerText =
+        players[playState.activePlayer].name;
+      $id(playState.activePlayer).classList.remove("active");
+      if (playState.multiplayer == 2) {
         dispatch('ADD_NUM_MOVES');
+      } else if(playState.multiplayer == 1){
+        const {row, cell} = nextPlay();
+        play(row, cell);
       }
-      changeTurn();
-      $id(activePlayer).classList.add("active");
+      dispatch('CHANGE_TURN');
+      $id(playState.activePlayer).classList.add("active");
     }
   }
 }
 
-resetBoard();
-
-function dispatch(action, value = '', player = activePlayer){
+function dispatch(action, value = '', player = playState.activePlayer){
   if(action == 'ADD_NUM_WINS'){
     players[player].numWins++;
   } else if(action == 'ADD_NUM_LOSTS'){
@@ -200,11 +207,19 @@ function dispatch(action, value = '', player = activePlayer){
       1: { icon: "cross", state: ``, name: "", moves: 0, numWins: 0, numLost: 0 },
       2: { icon: "circle", state: ``, name: "", moves: 0, numWins: 0, numLost: 0 },
     }
-  } else if(action = 'CHANGE_MULTIPLAYER'){
+  } else if(action == 'CHANGE_MULTIPLAYER'){
     playState.multiplayer = value;
+  } else if(action == 'CHANGE_TURN'){
+    playState.activePlayer = value === 1 ? 2 : 1;
+  } else if (action == 'CREATE_BOARD'){
+    const {rows, cells} = value;
+    playState.board = Array.from({ length: rows }, (_, i) =>
+    Array.from({ length: cells }, (_, i) => "")
+  );
   }
 }
 
 
 
 
+resetBoard();
