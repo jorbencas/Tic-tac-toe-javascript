@@ -14,21 +14,28 @@ let playState = {
 };
 function changeMultiplayer(e) {
   multiplayer = parseInt(e.currentTarget.value);
-  console.log("====================================");
-  console.log(multiplayer);
-  console.log("====================================");
   if (multiplayer == 2) {
     $id("options").innerHTML = `
-     <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value)' id="nombreJugador" value=''>
-      <label for="nombreJugador">Nombre del jugador</label>`;
+     <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,1)' id="nombreJugador" value=''>
+      <label for="nombreJugador">Nombre del jugador 1</label>
+      
+      
+      
+      <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,2)' id="nombreJugador" value=''>
+      <label for="nombreJugador">Nombre del jugador 3</label>
+      
+      
+      `;
   } else {
     $id("options").innerHTML = "";
-    changeNameMultiPlayer;
+    changeNameMultiPlayer('',1);
+    changeNameMultiPlayer('',2);
+
   }
 }
 
-function changeNameMultiPlayer(namePlayer = "") {
-  players[activePlayer].name = namePlayer;
+function changeNameMultiPlayer(namePlayer = "", player) {
+  dispatch('SET_NAME_PLAYER', namePlayer,player);
 }
 
 function createBoard(rows, cells) {
@@ -129,7 +136,7 @@ function resetBoard() {
 
 function changeTurn(h = activePlayer) {
   if (h !== 1 && multiplayer) {
-    players[activePlayer].moves++;
+    dispatch('ADD_NUM_MOVES','',h);
   }
   activePlayer = h === 1 ? 2 : 1;
 }
@@ -148,15 +155,19 @@ function play(x, y) {
       isEndByDiagonalUpward() ||
       isEndByTie()
     ) {
-      players[activePlayer].numWins++;
-      players[activePlayer].numLost++;
+    
       $id(activePlayer).classList.remove("active");
       $("div[id^='1'] .message").innerText = players[1].state.toUpperCase();
       $("div[id^='2'] .message").innerText = players[2].state.toUpperCase();
       $("div[id^='1']").classList.add(players[1].state);
       $("div[id^='2']").classList.add(players[2].state);
       setTimeout(() => {
-        playState.numPlays--;
+        
+        if(multiplayer == 2){
+          dispatch('ADD_NUM_WINS',);
+          dispatch('ADD_NUM_LOSTS',);
+
+        }
         $("div[id^='1'] .message").innerText = "";
         $("div[id^='2'] .message").innerText = "";
         $("div[id^='1']").classList.remove(players[1].state);
@@ -177,3 +188,22 @@ function play(x, y) {
 }
 
 resetBoard();
+
+
+function dispatch(action, value = '', player = activePlayer){
+  if(action == 'ADD_NUM_WINS'){
+    players[player].numWins++;
+  } else if(action == 'ADD_NUM_LOSTS'){
+    players[player].numLost++;
+  } else if(action == 'ADD_NUM_MOVES'){
+    players[player].moves++;
+  } else if(action == 'DESINCREMENT_NUM_PLAYS'){
+    playState.numPlays--;
+  } else if(action == 'SET_NAME_PLAYER'){
+    players[player].name = value;
+  }
+}
+
+
+
+
