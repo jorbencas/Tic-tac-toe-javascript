@@ -1,30 +1,18 @@
 const $ = (selector) => document.querySelector(selector);
 const $id = (selector) => document.getElementById(selector);
 const win = 3;
-let players = {
-  1: { icon: "cross", state: ``, name: "", moves: 0, numWins: 0, numLost: 0 },
-  2: { icon: "circle", state: ``, name: "", moves: 0, numWins: 0, numLost: 0 },
-};
+let players;
 let playState = {
   numPlays: 3,
   multiplayer: 1,
   activePlayer: 1,
   board: [],
 };
+dispatch("RESET_PLAYSTATE");
+resetBoard();
 
 function changeMultiplayer(e) {
-  if (playState.numPlays === 3) {
-    dispatch("CHANGE_MULTIPLAYER", parseInt(e.currentTarget.value));
-    changeViewMultiPlayer();
-  }
-}
-
-function changeNameMultiPlayer(namePlayer = "", player) {
-  dispatch("SET_NAME_PLAYER", namePlayer, player);
-  $("div[id^='" + player + "'] .message").innerText = namePlayer;
-}
-
-function changeViewMultiPlayer() {
+  dispatch("CHANGE_MULTIPLAYER", parseInt(e));
   if (playState.multiplayer == 2) {
     $id("options").innerHTML = `
       <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,1)' id="nombreJugador" value=''>
@@ -40,61 +28,62 @@ function changeViewMultiPlayer() {
   }
 }
 
-function resetPlayState() {
-  $("div[id^='1'] .message").innerText = "";
-  $("div[id^='2'] .message").innerText = "";
-  $("div[id^='1']").classList.remove(players[1].state);
-  $("div[id^='2']").classList.remove(players[2].state);
-  dispatch("CHANGE_TURN", "", 2);
-  resetBoard();
-  dispatch("DESINCREMENT_NUM_PLAYS");
-  $id(playState.activePlayer).classList.add("active");
-  if (playState.numPlays == 0) {
-    changeViewMultiPlayer();
-    dispatch("RESET_NUM_PLAYS");
-    $id("multiplayer").setAttribute("visibility", "visible");
-    if (playState.multiplayer == 2) {
-      $id("options").innerHTML =
-        "el jugador" +
-        players[1].name +
-        " ha hecho " +
-        players[1].moves +
-        " movimientos y ha ganado " +
-        players[1].numWins +
-        " mientras que ha perdido " +
-        players[1].numLost +
-        " partidas " +
-        " y el jugador" +
-        players[2].name +
-        " ha hecho " +
-        players[2].moves +
-        " movimientos y ha ganado" +
-        players[2].numWins +
-        " mientras que ha perdido " +
-        players[2].numLost +
-        " partidas ";
-    }
-    dispatch("RESET_PLAYSTATE");
-  } else {
-    $id("options").innerHTML = playState.numPlays + "partidas";
-  }
+function changeNameMultiPlayer(namePlayer = "", player) {
+  dispatch("SET_NAME_PLAYER", namePlayer, player);
+  $("div[id^='" + player + "'] .message").innerText = namePlayer;
 }
 
-function nextPlay() {
-  let position = {
-    cell: 0,
-    row: 0,
-  };
-  playState.board.forEach((e, i) => {
-    e.forEach((c, j) => {
-      if (c == 0 && position.row == 0 && position.cell == 0) {
-        position.row = i;
-        position.cell = j;
+function resetPlayState() {
+  if (playState.multiplayer == 2) {
+    let num1 = "";
+    for (const key in players[1].state) {
+      if (Object.hasOwnProperty.call(players[1].state, key)) {
+        const element = players[1].state[key];
+        if (element.name === "ganas") {
+          num1 += `<td> partida ${key.replace("play", "")} : ${
+            element.moves
+          } movimientos</td>`;
+        }
       }
-    });
-  });
-  return position;
+    }
+    let num2 = "";
+    for (const key in players[2].state) {
+      if (Object.hasOwnProperty.call(players[2].state, key)) {
+        const element = players[2].state[key];
+        if (element.name === "ganas") {
+          num2 += `<td> partida ${key.replace("play", "")} : ${
+            element.moves
+          } movimientos</td>`;
+        }
+      }
+    }
+
+    $id("options").innerHTML = `<table border='1'>
+    <thead>
+      <th>Jugadores</th>
+      <th>Victorias</th>
+      <th>Movimientos por partidas</th>
+    </thead>
+      <tbody>
+        <tr>
+          <td>${players[1].name}</td>
+          <td>${players[1].numWins}</td>
+          ${num1}
+        </tr>
+        <tr>
+          <td>${players[2].name}</td>
+          <td>${players[2].numWins}</td>
+          ${num2}
+        </tr>
+      </tbody>
+    </table>`;
+  }
+  dispatch("CHANGE_MULTIPLAYER", 1);
+  dispatch("RESET_NUM_PLAYS");
+  $id("multiplayer").setAttribute("visibility", "visible");
+  dispatch("RESET_PLAYSTATE");
 }
+
 /*
     Todas las functiones de "isEndBy", se aplican 
     desde la posicion 0,0 del tablero y luego de 
@@ -105,12 +94,12 @@ function isEndByVertical(y) {
   let end = false;
   if (playState.board[y].filter((f) => f === 1).length === win) {
     end = true;
-    players[1].state = "ganas";
-    players[2].state = "pierdes";
+    dispatch("SET_WIN_NAME", "ganas", 1);
+    dispatch("SET_WIN_NAME", "pierdes", 2);
   } else if (playState.board[y].filter((f) => f === 2).length === win) {
     end = true;
-    players[1].state = "pierdes";
-    players[2].state = "ganas";
+    dispatch("SET_WIN_NAME", "pierdes", 1);
+    dispatch("SET_WIN_NAME", "ganas", 2);
   }
   return end;
 }
@@ -119,12 +108,12 @@ function isEndByHorizontal(x) {
   let end = false;
   if (playState.board.filter((e) => e[x] === 1).length == win) {
     end = true;
-    players[1].state = "ganas";
-    players[2].state = "pierdes";
+    dispatch("SET_WIN_NAME", "ganas", 1);
+    dispatch("SET_WIN_NAME", "pierdes", 2);
   } else if (playState.board.filter((e) => e[x] === 2).length == win) {
     end = true;
-    players[1].state = "pierdes";
-    players[2].state = "ganas";
+    dispatch("SET_WIN_NAME", "pierdes", 1);
+    dispatch("SET_WIN_NAME", "ganas", 2);
   }
   return end;
 }
@@ -135,14 +124,14 @@ function isEndByDiagonalFalling() {
     playState.board.filter((_, j) => playState.board[j][j] == 1).length == win
   ) {
     end = true;
-    players[1].state = "ganas";
-    players[2].state = "pierdes";
+    dispatch("SET_WIN_NAME", "ganas", 1);
+    dispatch("SET_WIN_NAME", "pierdes", 2);
   } else if (
     playState.board.filter((_, j) => playState.board[j][j] == 2).length == win
   ) {
     end = true;
-    players[1].state = "pierdes";
-    players[2].state = "ganas";
+    dispatch("SET_WIN_NAME", "pierdes", 1);
+    dispatch("SET_WIN_NAME", "ganas", 2);
   }
   return end;
 }
@@ -155,15 +144,15 @@ function isEndByDiagonalUpward() {
       .length == win
   ) {
     end = true;
-    players[1].state = "ganas";
-    players[2].state = "pierdes";
+    dispatch("SET_WIN_NAME", "ganas", 1);
+    dispatch("SET_WIN_NAME", "pierdes", 2);
   } else if (
     playState.board.filter((_, i) => playState.board[i][last - i] == 2)
       .length == win
   ) {
     end = true;
-    players[1].state = "pierdes";
-    players[2].state = "ganas";
+    dispatch("SET_WIN_NAME", "pierdes", 1);
+    dispatch("SET_WIN_NAME", "ganas", 2);
   }
   return end;
 }
@@ -175,8 +164,8 @@ function isEndByTie() {
       .length == win
   ) {
     end = true;
-    players[1].state = "empate";
-    players[2].state = "empate";
+    dispatch("SET_WIN_NAME", "empate", 1);
+    dispatch("SET_WIN_NAME", "empate", 2);
   }
   return end;
 }
@@ -199,6 +188,136 @@ function resetBoard() {
     .join("");
 }
 
+function nextPlay(y, x) {
+  let position = {
+    cell: 0,
+    row: 0,
+  };
+  let last = playState.board.length - 1;
+  console.log("====================================");
+  console.log(y, x);
+  console.log("====================================");
+  //una ficha
+  //DiagonalFalling
+  if (
+    playState.board[last][last] == 1 &&
+    playState.board[last - 1][last - 1] == 1
+  ) {
+    position.row = 0;
+    position.cell = 0;
+  }
+
+  if (playState.board[0][0] == 1 && playState.board[last - 1][last - 1] == 1) {
+    position.row = last;
+    position.cell = last;
+  } else if (playState.board[0][0] == 1 && playState.board[last][last] == 1) {
+    position.row = last - 1;
+    position.cell = last - 1;
+  } else if (
+    playState.board[last][0] == 1 &&
+    playState.board[last - 1][last - 1] == 1
+  ) {
+    //DiagonalUpward
+    position.row = last;
+    position.cell = 0;
+  } else if (
+    playState.board[0][last] == 1 &&
+    playState.board[last - 1][last - 1] == 1
+  ) {
+    position.row = 0;
+    position.cell = last;
+  } else if (playState.board[last][0] == 1 && playState.board[0][last] == 1) {
+    position.row = last - 1;
+    position.cell = last - 1;
+  }
+
+  if (playState.board[y][0] == 1 && playState.board[y][last - 1] == 1) {
+    //Vertical
+    position.row = last;
+    position.cell = y;
+  } else if (
+    playState.board[y][last] == 1 &&
+    playState.board[y][last - 1] == 1
+  ) {
+    position.row = 0;
+    position.cell = y;
+  } else if (playState.board[y][last] == 1 && playState.board[y][0] == 1) {
+    position.row = last - 1;
+    position.cell = y;
+  } else if (playState.board[0][x] == 1 && playState.board[last - 1][x] == 1) {
+    //horizontal
+    position.row = last;
+    position.cell = x;
+    console.log("FUFUFUUFUFUFUUFUFUFUFUUFUFUFUFUUFUFUU");
+    console.log(position.row, position.cell);
+    console.log("FUFUFUUFUFUFUUFUFUFUFUUFUFUFUFUUFUFUU");
+  } else if (
+    playState.board[last][x] == 1 &&
+    playState.board[last - 1][x] == 1
+  ) {
+    position.row = x;
+    position.cell = 0;
+  } else if (playState.board[last][x] == 1 && playState.board[0][x] == 1) {
+    position.row = x;
+    position.cell = last - 1;
+  } else if (position.row == 0 && position.cell == 0) {
+    if (playState.board[0][0] === playState.board[y][x]) {
+      position.row = last;
+      position.cell = last - 1;
+    }
+    if (playState.board[last][last - 1] === playState.board[y][x]) {
+      position.row = last - 1;
+      position.cell = 0;
+    }
+    if (playState.board[last - 1][0] === playState.board[y][x]) {
+      position.row = last;
+      position.cell = last;
+    }
+
+    if (playState.board[last][last] === playState.board[y][x]) {
+      position.row = 0;
+      position.cell = last;
+    }
+
+    if (playState.board[0][last] === playState.board[y][x]) {
+      position.row = last;
+      position.cell = 0;
+    }
+    if (playState.board[last][0] === playState.board[y][x]) {
+      position.row = last - 1;
+      position.cell = last - 1;
+    }
+    if (playState.board[last - 1][last - 1] === playState.board[y][x]) {
+      position.row = 0;
+      position.cell = last - 1;
+    }
+
+    if (playState.board[0][last - 1] === playState.board[y][x]) {
+      position.row = last - 1;
+      position.cell = last;
+    }
+
+    if (playState.board[last - 1][last] === playState.board[y][x]) {
+      position.row = 0;
+      position.cell = 0;
+    }
+    // } else if (playState.board[position.row][position.cell] == 2) {
+    //   playState.board.forEach((e, i) => {
+    //     e.forEach((c, j) => {
+    //       if (playState.board[i][j] == 0) {
+    //         position.row = i;
+    //         position.cell = j;
+    //       }
+    //     });
+    //   });
+  }
+
+  console.log("FIN");
+  console.log(playState.activePlayer);
+  console.log("FIN");
+  return position;
+}
+
 function play(x, y) {
   if (
     playState.multiplayer == 2 &&
@@ -213,7 +332,7 @@ function play(x, y) {
     $id("options").innerHTML = "";
   }
 
-  if (playState.board[y][x] == 0) {
+  if (playState.board[y][x] == "") {
     $id(y + "-" + x).innerHTML = `<img src="${
       players[playState.activePlayer].icon
     }.svg" alt="Jugador ${playState.activePlayer}">`;
@@ -226,18 +345,36 @@ function play(x, y) {
       isEndByDiagonalUpward() ||
       isEndByTie()
     ) {
-      if (playState.multiplayer == 2) {
-        dispatch("ADD_NUM_WINS");
-        let numPlayer = players[1].state == "ganas" ? 2 : 1;
-        dispatch("ADD_NUM_LOSTS", "", numPlayer);
-      }
       $id(playState.activePlayer).classList.remove("active");
-      $("div[id^='1'] .message").innerText = players[1].state.toUpperCase();
-      $("div[id^='2'] .message").innerText = players[2].state.toUpperCase();
-      $("div[id^='1']").classList.add(players[1].state);
-      $("div[id^='2']").classList.add(players[2].state);
+      $("div[id^='1'] .message").innerText =
+        players[1].state["play" + playState.numPlays].name.toUpperCase();
+      $("div[id^='2'] .message").innerText =
+        players[2].state["play" + playState.numPlays].name.toUpperCase();
+      $("div[id^='1']").classList.add(
+        players[1].state["play" + playState.numPlays].name
+      );
+      $("div[id^='2']").classList.add(
+        players[2].state["play" + playState.numPlays].name
+      );
       setTimeout(() => {
-        resetPlayState();
+        $("div[id^='1'] .message").innerText = players[1].name;
+        $("div[id^='2'] .message").innerText = players[2].name;
+        $("div[id^='1']").classList.remove(
+          players[1].state["play" + playState.numPlays].name
+        );
+        $("div[id^='2']").classList.remove(
+          players[2].state["play" + playState.numPlays].name
+        );
+        dispatch("ADD_NUM_WINS");
+        dispatch("CHANGE_TURN", "", 2);
+        resetBoard();
+        dispatch("DESINCREMENT_NUM_PLAYS");
+        $id(playState.activePlayer).classList.add("active");
+        if (playState.numPlays == 0) {
+          resetPlayState();
+        } else {
+          $id("options").innerHTML = playState.numPlays + "partidas";
+        }
       }, 2000);
     } else {
       $id(playState.activePlayer).classList.remove("active");
@@ -245,7 +382,7 @@ function play(x, y) {
       if (playState.multiplayer == 2) {
         dispatch("ADD_NUM_MOVES");
       } else if (playState.multiplayer == 1 && playState.activePlayer == 2) {
-        const { row, cell } = nextPlay();
+        const { row, cell } = nextPlay(y, x);
         play(row, cell);
       }
       $id(playState.activePlayer).classList.add("active");
@@ -255,11 +392,19 @@ function play(x, y) {
 
 function dispatch(action, value = "", player = playState.activePlayer) {
   if (action == "ADD_NUM_WINS") {
-    players[player].numWins++;
-  } else if (action == "ADD_NUM_LOSTS") {
-    players[player].numLost++;
+    if (players[player].state["play" + playState.numPlays].name == "ganas") {
+      players[player].numWins++;
+    }
   } else if (action == "ADD_NUM_MOVES") {
-    players[player].moves++;
+    if (!players[player].state["play" + playState.numPlays]) {
+      players[player].state["play" + playState.numPlays] = {
+        name: "",
+        moves: 1,
+      };
+    }
+    players[player].state["play" + playState.numPlays].moves++;
+  } else if (action == "SET_WIN_NAME") {
+    players[player].state["play" + playState.numPlays].name = value;
   } else if (action == "DESINCREMENT_NUM_PLAYS") {
     playState.numPlays--;
   } else if (action == "SET_NAME_PLAYER") {
@@ -268,33 +413,33 @@ function dispatch(action, value = "", player = playState.activePlayer) {
     players = {
       1: {
         icon: "cross",
-        state: ``,
+        state: {},
         name: "",
-        moves: 0,
         numWins: 0,
-        numLost: 0,
       },
       2: {
         icon: "circle",
-        state: ``,
+        state: {},
         name: "",
-        moves: 0,
         numWins: 0,
-        numLost: 0,
       },
     };
   } else if (action == "CHANGE_MULTIPLAYER") {
     playState.multiplayer = value;
   } else if (action == "CHANGE_TURN") {
     playState.activePlayer = player === 1 ? 2 : 1;
+    if (!players[player].state["play" + playState.numPlays]) {
+      players[player].state["play" + playState.numPlays] = {
+        name: "",
+        moves: 1,
+      };
+    }
   } else if (action == "CREATE_BOARD") {
     const { rows, cells } = value;
-    playState.board = Array.from({ length: rows }, (_, i) =>
-      Array.from({ length: cells }, (_, i) => "")
+    playState.board = Array.from({ length: rows }, (_, _i) =>
+      Array.from({ length: cells }, (_, _i) => "")
     );
   } else if (action == "RESET_NUM_PLAYS") {
     playState.numPlays = 3;
   }
 }
-
-resetBoard();

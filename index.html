@@ -9,8 +9,7 @@
 </head>
 <body>
     <h1>3 en raya</h1>
-
-    <select onchange="changeMultiplayer(event)" id="multiplayer">
+    <select onchange="changeMultiplayer(event.currentTarget.value)" id="multiplayer">
         <option value="1">SinglePlayer</option>
         <option value="2">MultiPlayer</option>
     </select>
