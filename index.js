@@ -19,7 +19,7 @@ function changeMultiplayer(e) {
         <label for="nombreJugador">Nombre del jugador 1</label>
         
         <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,2)' id="nombreJugador" value=''>
-        <label for="nombreJugador">Nombre del jugador 3</label>
+        <label for="nombreJugador">Nombre del jugador 2</label>
         `;
   } else {
     $id("options").innerHTML = "";
@@ -79,11 +79,17 @@ function resetPlayState() {
         </tr>
       </tbody>
     </table>`;
+    dispatch("CHANGE_MULTIPLAYER", 1);
+    dispatch("RESET_NUM_PLAYS");
+    $id("multiplayer").setAttribute("display", "block");
+    dispatch("RESET_PLAYSTATE");
+  } else {
+    $id(
+      "options"
+    ).innerHTML = `<div class='info'> <a class='player' href='${location.href}'>Recarga la pagina para reiniciar el juego </a> </div>`;
+    $id("board").innerHTML = "";
+    $id("info").innerHTML = "";
   }
-  dispatch("CHANGE_MULTIPLAYER", 1);
-  dispatch("RESET_NUM_PLAYS");
-  $id("multiplayer").setAttribute("display", "block");
-  dispatch("RESET_PLAYSTATE");
 }
 
 /*
