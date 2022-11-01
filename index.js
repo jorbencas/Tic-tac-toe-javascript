@@ -86,7 +86,7 @@ function resetPlayState() {
   } else {
     $id(
       "options"
-    ).innerHTML = `<div class='info'> <a class='player' href='${location.href}'>Recarga la pagina para reiniciar el juego </a> </div>`;
+    ).innerHTML = `<div class='info'> <a class='player' href='${location.href}'>Reiniciar el juego </a> </div>`;
     $id("board").innerHTML = "";
     $id("info").innerHTML = "";
   }
