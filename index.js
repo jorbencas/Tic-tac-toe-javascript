@@ -35,12 +35,14 @@ function changeNameMultiPlayer(namePlayer = "", player) {
 
 function resetPlayState() {
   if (playState.multiplayer == 2) {
+    let numPlays = { 1: "utltima", 2: "segunda", 3: "primera" };
+
     let num1 = "";
     for (const key in players[1].state) {
       if (Object.hasOwnProperty.call(players[1].state, key)) {
         const element = players[1].state[key];
         if (element.name === "ganas") {
-          num1 += `<td> partida ${key.replace("play", "")} : ${
+          num1 += `<td> ${numPlays[key.replace("play", "")]} partida : ${
             element.moves
           } movimientos</td>`;
         }
@@ -51,18 +53,18 @@ function resetPlayState() {
       if (Object.hasOwnProperty.call(players[2].state, key)) {
         const element = players[2].state[key];
         if (element.name === "ganas") {
-          num2 += `<td> partida ${key.replace("play", "")} : ${
+          num2 += `<td> ${numPlays[key.replace("play", "")]} partida : ${
             element.moves
           } movimientos</td>`;
         }
       }
     }
-
+    let colspan = num1.length > 0 && num2.length > 0 ? 2 : 2;
     $id("options").innerHTML = `<table border='1'>
     <thead>
       <th>Jugadores</th>
       <th>Victorias</th>
-      <th>Movimientos por partidas</th>
+      <th colspan='${colspan}'>Movimientos por partidas</th>
     </thead>
       <tbody>
         <tr>
@@ -80,7 +82,7 @@ function resetPlayState() {
   }
   dispatch("CHANGE_MULTIPLAYER", 1);
   dispatch("RESET_NUM_PLAYS");
-  $id("multiplayer").setAttribute("visibility", "visible");
+  $id("multiplayer").setAttribute("display", "block");
   dispatch("RESET_PLAYSTATE");
 }
 
@@ -190,13 +192,10 @@ function resetBoard() {
 
 function nextPlay(y, x) {
   let position = {
-    cell: 0,
-    row: 0,
+    cell: -1,
+    row: -1,
   };
   let last = playState.board.length - 1;
-  console.log("====================================");
-  console.log(y, x);
-  console.log("====================================");
   //una ficha
   //DiagonalFalling
   if (
@@ -206,115 +205,112 @@ function nextPlay(y, x) {
     position.row = 0;
     position.cell = 0;
   }
-
   if (playState.board[0][0] == 1 && playState.board[last - 1][last - 1] == 1) {
     position.row = last;
     position.cell = last;
-  } else if (playState.board[0][0] == 1 && playState.board[last][last] == 1) {
+  }
+  if (playState.board[0][0] == 1 && playState.board[last][last] == 1) {
     position.row = last - 1;
     position.cell = last - 1;
-  } else if (
+  }
+
+  if (
     playState.board[last][0] == 1 &&
     playState.board[last - 1][last - 1] == 1
   ) {
     //DiagonalUpward
-    position.row = last;
-    position.cell = 0;
-  } else if (
+    position.row = 0;
+    position.cell = last;
+  }
+  if (
     playState.board[0][last] == 1 &&
     playState.board[last - 1][last - 1] == 1
   ) {
-    position.row = 0;
-    position.cell = last;
-  } else if (playState.board[last][0] == 1 && playState.board[0][last] == 1) {
+    position.row = last;
+    position.cell = 0;
+  }
+  if (playState.board[last][0] == 1 && playState.board[0][last] == 1) {
     position.row = last - 1;
     position.cell = last - 1;
   }
 
   if (playState.board[y][0] == 1 && playState.board[y][last - 1] == 1) {
     //Vertical
-    position.row = last;
-    position.cell = y;
-  } else if (
-    playState.board[y][last] == 1 &&
-    playState.board[y][last - 1] == 1
-  ) {
-    position.row = 0;
-    position.cell = y;
-  } else if (playState.board[y][last] == 1 && playState.board[y][0] == 1) {
-    position.row = last - 1;
-    position.cell = y;
-  } else if (playState.board[0][x] == 1 && playState.board[last - 1][x] == 1) {
+    position.row = y;
+    position.cell = last;
+  }
+  if (playState.board[y][last] == 1 && playState.board[y][last - 1] == 1) {
+    position.row = y;
+    position.cell = 0;
+  }
+  if (playState.board[y][last] == 1 && playState.board[y][0] == 1) {
+    position.row = y;
+    position.cell = last - 1;
+  }
+
+  if (playState.board[0][x] == 1 && playState.board[last - 1][x] == 1) {
     //horizontal
     position.row = last;
     position.cell = x;
-    console.log("FUFUFUUFUFUFUUFUFUFUFUUFUFUFUFUUFUFUU");
-    console.log(position.row, position.cell);
-    console.log("FUFUFUUFUFUFUUFUFUFUFUUFUFUFUFUUFUFUU");
-  } else if (
-    playState.board[last][x] == 1 &&
-    playState.board[last - 1][x] == 1
-  ) {
-    position.row = x;
-    position.cell = 0;
-  } else if (playState.board[last][x] == 1 && playState.board[0][x] == 1) {
-    position.row = x;
-    position.cell = last - 1;
-  } else if (position.row == 0 && position.cell == 0) {
+  }
+  if (playState.board[last][x] == 1 && playState.board[last - 1][x] == 1) {
+    position.row = 0;
+    position.cell = x;
+  }
+
+  if (playState.board[last][x] == 1 && playState.board[0][x] == 1) {
+    position.row = last - 1;
+    position.cell = x;
+  }
+
+  if (position.row == -1 && position.cell == -1) {
     if (playState.board[0][0] === playState.board[y][x]) {
-      position.row = last;
-      position.cell = last - 1;
+      position.row = last - 1;
+      position.cell = last;
     }
     if (playState.board[last][last - 1] === playState.board[y][x]) {
-      position.row = last - 1;
-      position.cell = 0;
+      position.row = 0;
+      position.cell = last - 1;
     }
     if (playState.board[last - 1][0] === playState.board[y][x]) {
       position.row = last;
       position.cell = last;
     }
-
     if (playState.board[last][last] === playState.board[y][x]) {
-      position.row = 0;
-      position.cell = last;
-    }
-
-    if (playState.board[0][last] === playState.board[y][x]) {
       position.row = last;
       position.cell = 0;
+    }
+    if (playState.board[0][last] === playState.board[y][x]) {
+      position.row = 0;
+      position.cell = last - 1;
     }
     if (playState.board[last][0] === playState.board[y][x]) {
       position.row = last - 1;
       position.cell = last - 1;
     }
     if (playState.board[last - 1][last - 1] === playState.board[y][x]) {
-      position.row = 0;
-      position.cell = last - 1;
-    }
-
-    if (playState.board[0][last - 1] === playState.board[y][x]) {
       position.row = last - 1;
-      position.cell = last;
+      position.cell = 0;
     }
-
+    if (playState.board[0][last - 1] === playState.board[y][x]) {
+      position.row = last;
+      position.cell = 0;
+    }
     if (playState.board[last - 1][last] === playState.board[y][x]) {
       position.row = 0;
       position.cell = 0;
     }
-    // } else if (playState.board[position.row][position.cell] == 2) {
-    //   playState.board.forEach((e, i) => {
-    //     e.forEach((c, j) => {
-    //       if (playState.board[i][j] == 0) {
-    //         position.row = i;
-    //         position.cell = j;
-    //       }
-    //     });
-    //   });
+  } else if (playState.board[position.row][position.cell] == 2) {
+    playState.board.forEach((e, i) => {
+      e.forEach((c, j) => {
+        if (playState.board[i][j] == 0) {
+          position.row = i;
+          position.cell = j;
+        }
+      });
+    });
   }
 
-  console.log("FIN");
-  console.log(playState.activePlayer);
-  console.log("FIN");
   return position;
 }
 
@@ -328,7 +324,7 @@ function play(x, y) {
   }
 
   if (playState.numPlays == 3) {
-    $id("multiplayer").setAttribute("visibility", "hidden");
+    $id("multiplayer").setAttribute("display", "none");
     $id("options").innerHTML = "";
   }
 
@@ -366,6 +362,7 @@ function play(x, y) {
           players[2].state["play" + playState.numPlays].name
         );
         dispatch("ADD_NUM_WINS");
+        $id(playState.activePlayer).classList.remove("active");
         dispatch("CHANGE_TURN", "", 2);
         resetBoard();
         dispatch("DESINCREMENT_NUM_PLAYS");
@@ -383,9 +380,14 @@ function play(x, y) {
         dispatch("ADD_NUM_MOVES");
       } else if (playState.multiplayer == 1 && playState.activePlayer == 2) {
         const { row, cell } = nextPlay(y, x);
-        play(row, cell);
+        play(cell, row);
       }
-      $id(playState.activePlayer).classList.add("active");
+      if (
+        players[playState.activePlayer].state["play" + playState.numPlays].name
+          .length === 0
+      ) {
+        $id(playState.activePlayer).classList.add("active");
+      }
     }
   }
 }
