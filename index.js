@@ -202,7 +202,7 @@ function nextPlay(y, x) {
     row: -1,
   };
   let last = playState.board.length - 1;
-  //una ficha
+
   //DiagonalFalling
   if (
     playState.board[last][last] == 1 &&
@@ -269,6 +269,7 @@ function nextPlay(y, x) {
     position.cell = x;
   }
 
+  //una ficha
   if (position.row == -1 && position.cell == -1) {
     if (playState.board[0][0] === playState.board[y][x]) {
       position.row = last - 1;
