@@ -33,6 +33,16 @@ function changeNameMultiPlayer(namePlayer = "", player) {
   $("div[id^='" + player + "'] .message").innerText = namePlayer;
 }
 
+function resetBtnGame(){
+  dispatch("CHANGE_MULTIPLAYER", 1);
+  dispatch("RESET_NUM_PLAYS");
+  dispatch("RESET_PLAYSTATE");
+  $id("multiplayer").setAttribute("style", "display:block;");
+  $id("info").setAttribute('style','display:flex;');
+  $id("options").innerHTML = "";
+  resetBoard();
+}
+
 function resetPlayState() {
   if (playState.multiplayer == 2) {
     let numPlays = { 1: "utltima", 2: "segunda", 3: "primera" };
@@ -78,18 +88,15 @@ function resetPlayState() {
           ${num2}
         </tr>
       </tbody>
-    </table>`;
-    dispatch("CHANGE_MULTIPLAYER", 1);
-    dispatch("RESET_NUM_PLAYS");
-    $id("multiplayer").setAttribute("display", "block");
-    dispatch("RESET_PLAYSTATE");
+    </table>
+    <div class='info'> <div class='player' onClick='resetBtnGame()'>Reiniciar el juego </div> </div>`;
   } else {
     $id(
       "options"
-    ).innerHTML = `<div class='info'> <a class='player' href='${location.href}'>Reiniciar el juego </a> </div>`;
-    $id("board").innerHTML = "";
-    $id("info").innerHTML = "";
+    ).innerHTML = `<div class='info'> <div class='player' onClick='resetBtnGame()'>Reiniciar el juego </div> </div>`;
   }
+  $id("board").innerHTML = "";
+  $id("info").setAttribute('style','display:none;');
 }
 
 /*
@@ -331,7 +338,7 @@ function play(x, y) {
   }
 
   if (playState.numPlays == 3) {
-    $id("multiplayer").setAttribute("display", "none");
+    $id("multiplayer").setAttribute("style", "display:none;");
     $id("options").innerHTML = "";
   }
 
