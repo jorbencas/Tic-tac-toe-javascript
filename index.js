@@ -15,11 +15,11 @@ function changeMultiplayer(e) {
   dispatch("CHANGE_MULTIPLAYER", parseInt(e));
   if (playState.multiplayer == 2) {
     $id("options").innerHTML = `
-      <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,1)' id="nombreJugador" value=''>
-        <label for="nombreJugador">Nombre del jugador 1</label>
+      <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,1)' id="nombreJugador1" value=''>
+        <label for="nombreJugador1">Nombre del jugador 1</label>
         
-        <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,2)' id="nombreJugador" value=''>
-        <label for="nombreJugador">Nombre del jugador 2</label>
+        <input type="text" onchange='changeNameMultiPlayer(event.currentTarget.value,2)' id="nombreJugador2" value=''>
+        <label for="nombreJugador2">Nombre del jugador 2</label>
         `;
   } else {
     $id("options").innerHTML = "";
@@ -93,7 +93,17 @@ function resetPlayState() {
   } else {
     $id(
       "options"
-    ).innerHTML = `<div class='info'> <div class='player' onClick='resetBtnGame()'>Reiniciar el juego </div> </div>`;
+    ).innerHTML = `<table border='1'>
+    <thead>
+      <th>Victorias</th>
+    </thead>
+      <tbody>
+        <tr>
+          <td>${players[1].numWins}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class='info'> <div class='player' onClick='resetBtnGame()'>Reiniciar el juego </div> </div>`;
   }
   $id("board").innerHTML = "";
   $id("info").setAttribute('style','display:none;');
