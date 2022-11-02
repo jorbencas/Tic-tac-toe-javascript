@@ -33,12 +33,12 @@ function changeNameMultiPlayer(namePlayer = "", player) {
   $("div[id^='" + player + "'] .message").innerText = namePlayer;
 }
 
-function resetBtnGame(){
+function resetBtnGame() {
   dispatch("CHANGE_MULTIPLAYER", 1);
   dispatch("RESET_NUM_PLAYS");
   dispatch("RESET_PLAYSTATE");
   $id("multiplayer").setAttribute("style", "display:block;");
-  $id("info").setAttribute('style','display:flex;');
+  $id("info").setAttribute("style", "display:flex;");
   $id("options").innerHTML = "";
   resetBoard();
 }
@@ -91,9 +91,7 @@ function resetPlayState() {
     </table>
     <div class='info'> <div class='player' onClick='resetBtnGame()'>Reiniciar el juego </div> </div>`;
   } else {
-    $id(
-      "options"
-    ).innerHTML = `<table border='1'>
+    $id("options").innerHTML = `<table border='1'>
     <thead>
       <th>Victorias</th>
     </thead>
@@ -106,14 +104,8 @@ function resetPlayState() {
     <div class='info'> <div class='player' onClick='resetBtnGame()'>Reiniciar el juego </div> </div>`;
   }
   $id("board").innerHTML = "";
-  $id("info").setAttribute('style','display:none;');
+  $id("info").setAttribute("style", "display:none;");
 }
-
-/*
-    Todas las functiones de "isEndBy", se aplican 
-    desde la posicion 0,0 del tablero y luego de 
-    izquierda a derecha
-  */
 
 function isEndByVertical(y) {
   let end = false;
@@ -340,23 +332,22 @@ function nextPlay(y, x) {
 
 function play(x, y) {
   if (
-    playState.multiplayer == 2 &&
-    players[1].name.length == 0 &&
-    players[2].name.length == 0
+    playState.board[y][x] == "" &&
+    (playState.multiplayer == 1 ||
+      (playState.multiplayer == 2 &&
+        players[1].name.length > 0 &&
+        players[2].name.length > 0))
   ) {
-    return;
-  }
+    if (playState.numPlays == 3) {
+      $id("multiplayer").setAttribute("style", "display:none;");
+      $id("options").innerHTML = playState.numPlays + "partidas";
+    }
 
-  if (playState.numPlays == 3) {
-    $id("multiplayer").setAttribute("style", "display:none;");
-    $id("options").innerHTML = "";
-  }
-
-  if (playState.board[y][x] == "") {
     $id(y + "-" + x).innerHTML = `<img src="${
       players[playState.activePlayer].icon
     }.svg" alt="Jugador ${playState.activePlayer}">`;
     playState.board[y][x] = playState.activePlayer;
+    $id(playState.activePlayer).classList.remove("active");
 
     if (
       isEndByVertical(y) ||
@@ -365,7 +356,6 @@ function play(x, y) {
       isEndByDiagonalUpward() ||
       isEndByTie()
     ) {
-      $id(playState.activePlayer).classList.remove("active");
       $("div[id^='1'] .message").innerText =
         players[1].state["play" + playState.numPlays].name.toUpperCase();
       $("div[id^='2'] .message").innerText =
@@ -386,7 +376,6 @@ function play(x, y) {
           players[2].state["play" + playState.numPlays].name
         );
         dispatch("ADD_NUM_WINS");
-        $id(playState.activePlayer).classList.remove("active");
         dispatch("CHANGE_TURN", "", 2);
         resetBoard();
         dispatch("DESINCREMENT_NUM_PLAYS");
@@ -398,7 +387,6 @@ function play(x, y) {
         }
       }, 2000);
     } else {
-      $id(playState.activePlayer).classList.remove("active");
       dispatch("CHANGE_TURN");
       if (playState.multiplayer == 2) {
         dispatch("ADD_NUM_MOVES");
@@ -422,12 +410,6 @@ function dispatch(action, value = "", player = playState.activePlayer) {
       players[player].numWins++;
     }
   } else if (action == "ADD_NUM_MOVES") {
-    if (!players[player].state["play" + playState.numPlays]) {
-      players[player].state["play" + playState.numPlays] = {
-        name: "",
-        moves: 1,
-      };
-    }
     players[player].state["play" + playState.numPlays].moves++;
   } else if (action == "SET_WIN_NAME") {
     players[player].state["play" + playState.numPlays].name = value;
@@ -454,8 +436,8 @@ function dispatch(action, value = "", player = playState.activePlayer) {
     playState.multiplayer = value;
   } else if (action == "CHANGE_TURN") {
     playState.activePlayer = player === 1 ? 2 : 1;
-    if (!players[player].state["play" + playState.numPlays]) {
-      players[player].state["play" + playState.numPlays] = {
+    if (!players[playState.activePlayer].state["play" + playState.numPlays]) {
+      players[playState.activePlayer].state["play" + playState.numPlays] = {
         name: "",
         moves: 1,
       };
