@@ -41,7 +41,7 @@ function resetBtnGame() {
   $id("info").setAttribute("style", "display:flex;");
   $id("options").innerHTML = "";
   resetBoard();
-}
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 
 function resetPlayState() {
   if (playState.multiplayer == 2) {
@@ -69,7 +69,7 @@ function resetPlayState() {
         }
       }
     }
-    let colspan = num1.length > 0 && num2.length > 0 ? 2 : 2;
+    let colspan = num1.length > 0 && num2.length > 0 ? 2 : 1;
     $id("options").innerHTML = `<table border='1'>
     <thead>
       <th>Jugadores</th>
@@ -218,7 +218,7 @@ function nextPlay(y, x) {
     playState.board[last - 1][last - 1] == 1
   ) {
     position.row = 0;
-    position.cell = 0;
+    position.cell                                                                                                                                                                                                                                                                                                                                                                                                         = 0;
   }
   if (playState.board[0][0] == 1 && playState.board[last - 1][last - 1] == 1) {
     position.row = last;
@@ -390,7 +390,7 @@ function play(x, y) {
       dispatch("CHANGE_TURN");
       if (playState.multiplayer == 2) {
         dispatch("ADD_NUM_MOVES");
-      } else if (playState.multiplayer == 1 && playState.activePlayer == 2) {
+      } else if (playState.activePlayer == 2) {
         const { row, cell } = nextPlay(y, x);
         play(cell, row);
       }
