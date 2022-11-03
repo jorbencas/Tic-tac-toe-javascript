@@ -2,12 +2,7 @@ const $ = (selector) => document.querySelector(selector);
 const $id = (selector) => document.getElementById(selector);
 const win = 3;
 let players;
-let playState = {
-  numPlays: 3,
-  multiplayer: 1,
-  activePlayer: 1,
-  board: [],
-};
+let playState = { numPlays: 3, multiplayer: 1, activePlayer: 1, board: [] };
 dispatch("RESET_PLAYSTATE");
 resetBoard();
 
@@ -41,7 +36,7 @@ function resetBtnGame() {
   $id("info").setAttribute("style", "display:flex;");
   $id("options").innerHTML = "";
   resetBoard();
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+}
 
 function resetPlayState() {
   if (playState.multiplayer == 2) {
@@ -79,12 +74,12 @@ function resetPlayState() {
       <tbody>
         <tr>
           <td>${players[1].name}</td>
-          <td>${players[1].numWins}</td>
+          <td>${players[1].wins}</td>
           ${num1}
         </tr>
         <tr>
           <td>${players[2].name}</td>
-          <td>${players[2].numWins}</td>
+          <td>${players[2].wins}</td>
           ${num2}
         </tr>
       </tbody>
@@ -97,7 +92,7 @@ function resetPlayState() {
     </thead>
       <tbody>
         <tr>
-          <td>${players[1].numWins}</td>
+          <td>${players[1].wins}</td>
         </tr>
       </tbody>
     </table>
@@ -218,7 +213,7 @@ function nextPlay(y, x) {
     playState.board[last - 1][last - 1] == 1
   ) {
     position.row = 0;
-    position.cell                                                                                                                                                                                                                                                                                                                                                                                                         = 0;
+    position.cell = 0;
   }
   if (playState.board[0][0] == 1 && playState.board[last - 1][last - 1] == 1) {
     position.row = last;
@@ -407,7 +402,7 @@ function play(x, y) {
 function dispatch(action, value = "", player = playState.activePlayer) {
   if (action == "ADD_NUM_WINS") {
     if (players[player].state["play" + playState.numPlays].name == "ganas") {
-      players[player].numWins++;
+      players[player].wins++;
     }
   } else if (action == "ADD_NUM_MOVES") {
     players[player].state["play" + playState.numPlays].moves++;
@@ -419,18 +414,8 @@ function dispatch(action, value = "", player = playState.activePlayer) {
     players[player].name = value;
   } else if (action == "RESET_PLAYSTATE") {
     players = {
-      1: {
-        icon: "cross",
-        state: {},
-        name: "",
-        numWins: 0,
-      },
-      2: {
-        icon: "circle",
-        state: {},
-        name: "",
-        numWins: 0,
-      },
+      1: { icon: "cross", state: {}, name: "", wins: 0 },
+      2: { icon: "circle", state: {}, name: "", wins: 0 },
     };
   } else if (action == "CHANGE_MULTIPLAYER") {
     playState.multiplayer = value;
