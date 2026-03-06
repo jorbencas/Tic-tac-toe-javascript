@@ -1,32 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3 en raya</title>
+    <title>Tic-Tac-Toe Pro</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>3 en raya</h1>
-    <select onchange="changeMultiplayer(event.currentTarget.value)" id="multiplayer">
-        <option value="1">SinglePlayer</option>
-        <option value="2">MultiPlayer</option>
-    </select>
-    <div class="options" id="options"></div>
+    <h1>3 en Raya</h1>
+
+    <div class="menu-inicial">
+        <select onchange="changeMultiplayer(this.value)" id="multiplayer">
+            <option value="1">👤 vs IA (Single Player)</option>
+            <option value="2">👥 vs Amigo (Multiplayer)</option>
+        </select>
+    </div>
+
+    <div class="options" id="options">
+        <button class="start-btn visible" onclick="startGame()">JUGAR CONTRA IA</button>
+    </div>
+
     <div id="info" class="info">
-        <div id='1' class="player active">
-            <img src="cross.svg" alt="Jugador 1" >
-            <div class="message"></div>
+        <div id="1" class="player active">
+            <img src="cross.svg" alt="X">
+            <div class="message">Jugador 1</div>
         </div>
-        <div id='2' class="player">
-            <img src="circle.svg" alt="Jugador 2" >
-            <div class="message"></div>
+        <div class="vs-divider">VS</div>
+        <div id="2" class="player">
+            <img src="circle.svg" alt="O">
+            <div class="message">Jugador 2</div>
         </div>
     </div>
-    <div class="board-container">
-        <div class="board" id="board"></div>
+
+    <div class="board" id="board"></div>
+
+    <div id="announcement" class="winner-announcement">
+        <p id="announcement-text">¡VICTORIA!</p>
+        <h2 id="winner-name">---</h2>
     </div>
+
     <script src="index.js"></script>
 </body>
 </html>
