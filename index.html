@@ -3,62 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3 en Raya Pro</title>
+    <title>3 en Raya - Edición Limpia</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1 class="main-title">3 EN RAYA</h1>
 
-    <main id="game-container" class="main-container">
-        <aside class="side-panel">
-            <div class="control-group" id="setup-menu">
-                <select onchange="changeMultiplayer(this.value)" id="multiplayer" class="minimal-select">
+    <main id="contenedor-juego" class="main-container">
+        <aside class="panel-lateral">
+            <div id="menu-configuracion">
+                <p class="etiqueta">MODO DE JUEGO</p>
+                <select onchange="cambiarModo(this.value)" id="selector-modo" class="input-minimal">
                     <option value="1">👤 CONTRA IA</option>
                     <option value="2">👥 DOS JUGADORES</option>
                 </select>
 
-                <div id="piece-selector" class="piece-selector">
-                    <p>TU PIEZA</p>
-                    <div class="piece-options">
-                        <button class="piece-btn active" onclick="selectPiece('cross', this)">X</button>
-                        <button class="piece-btn" onclick="selectPiece('circle', this)">O</button>
+                <div id="selector-pieza" class="selector-pieza">
+                    <p class="etiqueta">ELIGE TU PIEZA</p>
+                    <div class="opciones-pieza">
+                        <div class="pieza-btn activa" onclick="elegirPieza('cross', this)">
+                            <img src="cross.svg" alt="Equis">
+                        </div>
+                        <div class="pieza-btn" onclick="elegirPieza('circle', this)">
+                            <img src="circle.svg" alt="Círculo">
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div id="options" class="options-area">
-                <button class="start-btn visible" onclick="confirmStart()">EMPEZAR JUEGO</button>
-            </div>
-
-            <div id="info" class="status-panel">
-                <div id="1" class="player-card active">
-                    <div class="player-header">
-                        <img src="cross.svg" class="symbol-icon" id="icon-1">
-                        <span class="player-name">Jugador 1</span>
-                    </div>
-                    <div class="score-badge">VICTORIAS: <span id="wins-1">0</span></div>
+                
+                <div id="area-nombres" style="display:none; margin-top:20px;">
+                    <input type="text" id="nombre-j1" placeholder="Nombre Jugador 1" class="input-minimal">
+                    <input type="text" id="nombre-j2" placeholder="Nombre Jugador 2" class="input-minimal">
                 </div>
-                <div class="divider">VS</div>
-                <div id="2" class="player-card">
-                    <div class="player-header">
-                        <img src="circle.svg" class="symbol-icon" id="icon-2">
-                        <span class="player-name">Jugador 2</span>
+
+                <button class="btn-inicio" onclick="confirmarInicio()">EMPEZAR PARTIDA</button>
+            </div>
+
+            <div id="marcador" class="marcador-panel">
+                <div id="p1" class="tarjeta-jugador activa">
+                    <div class="info-cabecera">
+                        <img src="cross.svg" class="icono-min" id="img-p1">
+                        <span id="txt-p1">Jugador 1</span>
                     </div>
-                    <div class="score-badge">VICTORIAS: <span id="wins-2">0</span></div>
+                    <div class="puntos">Victorias: <span id="puntos-1">0</span></div>
+                </div>
+                <div class="divisor-vs">VS</div>
+                <div id="p2" class="tarjeta-jugador">
+                    <div class="info-cabecera">
+                        <img src="circle.svg" class="icono-min" id="img-p2">
+                        <span id="txt-p2">Bot Gemini</span>
+                    </div>
+                    <div class="puntos">Victorias: <span id="puntos-2">0</span></div>
                 </div>
             </div>
         </aside>
 
-        <section class="board-wrapper">
-            <div class="board" id="board"></div>
+        <section class="contenedor-tablero">
+            <div class="tablero" id="tablero"></div>
+            <div id="info-ronda" class="info-ronda"></div>
         </section>
     </main>
 
-    <section id="final-summary" class="summary-view" style="display:none;"></section>
+    <section id="resumen-final" class="vista-resumen" style="display:none;"></section>
 
-    <div id="announcement" class="announcement-overlay">
-        <p id="announcement-text"></p>
-        <h2 id="winner-display"></h2>
+    <div id="anuncio" class="overlay-anuncio">
+        <p id="anuncio-texto"></p>
+        <h2 id="anuncio-ganador"></h2>
     </div>
 
     <script src="index.js"></script>
