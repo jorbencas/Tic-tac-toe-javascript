@@ -1,35 +1,36 @@
 :root {
-    --bg: #0a0a0a;
-    --panel: #141414;
+    --bg: #050505;
+    --panel: #111111;
     --accent: #00e5ff;
-    --win: #00c853;
+    --win: #00e676;
     --lose: #ff1744;
-    --tie: #455a64;
-    --text: #f8fafc;
+    --tie: #78909c;
+    --text: #ffffff;
 }
 
 body {
     background-color: var(--bg);
     color: var(--text);
-    font-family: 'Inter', sans-serif;
-    display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    display: flex; flex-direction: column; align-items: center; padding: 50px 20px;
+    margin: 0;
 }
 
-.main-title { font-size: 0.8rem; letter-spacing: 0.6rem; opacity: 0.5; margin-bottom: 50px; }
+.main-title { font-size: 0.7rem; letter-spacing: 0.8rem; opacity: 0.4; margin-bottom: 60px; font-weight: 300; }
 
-.main-container { display: flex; gap: 60px; max-width: 1000px; width: 100%; align-items: flex-start; }
+.main-container { display: flex; gap: 80px; max-width: 1000px; width: 100%; align-items: flex-start; }
 
-/* Selector de Pieza Visual */
-.piece-options { display: flex; gap: 10px; margin-top: 10px; }
+/* Selector de Pieza Visual y Moderno */
+.piece-options { display: flex; gap: 12px; margin-top: 10px; }
 .piece-btn {
-    flex: 1; background: var(--panel); border: 1px solid rgba(255,255,255,0.1);
-    padding: 15px; border-radius: 8px; cursor: pointer; transition: 0.3s;
+    flex: 1; background: var(--panel); border: 1px solid rgba(255,255,255,0.05);
+    padding: 20px; border-radius: 8px; cursor: pointer; transition: 0.2s;
 }
-.piece-btn img { width: 25px; height: 25px; opacity: 0.3; }
-.piece-btn.active { border-color: var(--accent); background: rgba(0,229,255,0.05); }
-.piece-btn.active img { opacity: 1; }
+.piece-btn img { width: 30px; height: 30px; opacity: 0.2; filter: grayscale(1); }
+.piece-btn.active { border-color: var(--accent); background: rgba(0,229,255,0.03); }
+.piece-btn.active img { opacity: 1; filter: none; }
 
-/* Tablero Grande y Estable */
+/* TABLERO ULTRA ESTABLE */
 .board {
     display: grid;
     grid-template-columns: repeat(3, 150px);
@@ -38,29 +39,33 @@ body {
 }
 
 .cell {
-    background: var(--panel); border-radius: 4px;
-    display: flex; justify-content: center; align-items: center;
-    cursor: pointer; width: 150px; height: 150px;
+    background: var(--panel); border: 1px solid rgba(255,255,255,0.03);
+    width: 150px; height: 150px; display: flex; justify-content: center; align-items: center;
+    cursor: pointer; transition: background 0.2s;
 }
+.cell:hover { background: #1a1a1a; }
 .cell img { width: 80px; height: 80px; }
 
-/* Resumen Final en Castellano */
-.badge {
-    width: 40px; height: 40px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.8rem; font-weight: 800; border: 2px solid;
-}
-.badge.ganas { border-color: var(--win); color: var(--win); }
-.badge.pierdes { border-color: var(--lose); color: var(--lose); }
-.badge.empate { border-color: var(--tie); color: var(--tie); }
-
-/* Feedback Botón */
+/* BOTÓN INICIO CON FEEDBACK */
 .start-btn {
-    width: 100%; margin-top: 20px; padding: 15px; background: white;
-    color: black; border: none; font-weight: 800; border-radius: 4px; cursor: pointer;
+    width: 100%; margin-top: 30px; padding: 18px; background: white; color: black;
+    border: none; font-weight: 900; letter-spacing: 1px; cursor: pointer; border-radius: 4px;
 }
-.start-btn:active { transform: scale(0.97); background: var(--accent); }
+.start-btn:active { transform: scale(0.96); background: var(--accent); }
 
-/* Estilos de paneles e info iguales al diseño "Moderno" previo... */
-.player-card { background: var(--panel); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; margin-bottom: 10px; }
+/* RESUMEN FINAL GRANDE Y EN CASTELLANO */
+.summary-view { text-align: center; width: 100%; max-width: 600px; animation: slideUp 0.4s ease; }
+.badge-container { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+.badge {
+    width: 42px; height: 42px; border-radius: 50%; border: 2px solid;
+    display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.9rem;
+}
+.badge.G { border-color: var(--win); color: var(--win); }
+.badge.P { border-color: var(--lose); color: var(--lose); }
+.badge.E { border-color: var(--tie); color: var(--tie); }
+
+/* Estilos de Tarjetas */
+.player-card { background: var(--panel); padding: 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; transition: 0.3s; }
 .player-card.active { border-color: var(--accent); }
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }

@@ -3,67 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3 en Raya Moderno</title>
+    <title>3 en Raya Pro</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1 class="main-title">3 EN RAYA</h1>
-    </header>
+    <h1 class="main-title">3 EN RAYA</h1>
 
     <main id="game-container" class="main-container">
         <aside class="side-panel">
-            <div id="setup-panel" class="setup-panel">
+            <div id="setup-panel">
                 <div class="control-group">
-                    <label>MODO DE JUEGO</label>
-                    <select onchange="changeMultiplayer(this.value)" id="multiplayer" class="minimal-select">
+                    <label>MODO</label>
+                    <select onchange="cambiarModo(this.value)" id="multiplayer" class="minimal-select">
                         <option value="1">👤 VS IA</option>
-                        <option value="2">👥 MULTIPLAYER</option>
+                        <option value="2">👥 MULTIJUGADOR</option>
                     </select>
                 </div>
 
                 <div id="piece-selector" class="piece-selector">
-                    <label>ELIGE TU PIEZA</label>
+                    <label>TU PIEZA</label>
                     <div class="piece-options">
-                        <button class="piece-btn active" onclick="selectPiece('cross', this)">
-                            <img src="cross.svg">
+                        <button class="piece-btn active" onclick="seleccionarPieza('cross', this)">
+                            <img src="cross.svg" alt="X">
                         </button>
-                        <button class="piece-btn" onclick="selectPiece('circle', this)">
-                            <img src="circle.svg">
+                        <button class="piece-btn" onclick="seleccionarPieza('circle', this)">
+                            <img src="circle.svg" alt="O">
                         </button>
                     </div>
                 </div>
 
                 <div id="name-inputs" style="display:none; margin-top:15px;">
-                    <input type="text" id="n1" class="minimal-input" placeholder="Nombre Jugador 1">
-                    <input type="text" id="n2" class="minimal-input" placeholder="Nombre Jugador 2">
+                    <input type="text" id="n1" class="minimal-input" placeholder="Nombre J1">
+                    <input type="text" id="n2" class="minimal-input" placeholder="Nombre J2">
                 </div>
 
-                <button class="start-btn" onclick="confirmStart()">EMPEZAR SERIE</button>
+                <button class="start-btn" onclick="confirmarInicio()">INICIAR SERIE</button>
             </div>
 
-            <div id="info" class="status-panel" style="display:none;">
-                <div id="1" class="player-card active">
+            <div id="scoreboard" class="status-panel" style="display:none;">
+                <div id="p1" class="player-card active">
                     <div class="player-header">
                         <img src="cross.svg" class="symbol-icon" id="icon-1">
-                        <span class="player-name">Jugador 1</span>
+                        <span id="name-1" class="player-name">Jugador 1</span>
                     </div>
-                    <div class="score-badge">VICTORIAS: <span id="wins-1">0</span></div>
+                    <div class="score-badge">WINS: <span id="wins-1">0</span></div>
                 </div>
                 <div class="divider">VS</div>
-                <div id="2" class="player-card">
+                <div id="p2" class="player-card">
                     <div class="player-header">
                         <img src="circle.svg" class="symbol-icon" id="icon-2">
-                        <span class="player-name">Bot Gemini</span>
+                        <span id="name-2" class="player-name">IA</span>
                     </div>
-                    <div class="score-badge">VICTORIAS: <span id="wins-2">0</span></div>
+                    <div class="score-badge">WINS: <span id="wins-2">0</span></div>
                 </div>
             </div>
         </aside>
 
         <section class="board-wrapper">
             <div class="board" id="board"></div>
-            <div id="round-indicator" class="round-indicator"></div>
+            <div id="round-info" class="round-info"></div>
         </section>
     </main>
 
