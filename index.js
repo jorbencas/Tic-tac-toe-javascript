@@ -39,67 +39,50 @@ function resetBtnGame() {
 }
 
 function resetPlayState() {
-  if (playState.multiplayer == 2) {
-    let numPlays = { 1: "utltima", 2: "segunda", 3: "primera" };
+ const isMulti = playState.multiplayer == 2;
+  const p1 = players[1];
+  const p2 = players[2];
 
-    let num1 = "";
-    for (const key in players[1].state) {
-      if (Object.hasOwnProperty.call(players[1].state, key)) {
-        const element = players[1].state[key];
-        if (element.name === "ganas") {
-          num1 += `<td> ${numPlays[key.replace("play", "")]} partida : ${
-            element.moves
-          } movimientos</td>`;
-        }
-      }
-    }
-    let num2 = "";
-    for (const key in players[2].state) {
-      if (Object.hasOwnProperty.call(players[2].state, key)) {
-        const element = players[2].state[key];
-        if (element.name === "ganas") {
-          num2 += `<td> ${numPlays[key.replace("play", "")]} partida : ${
-            element.moves
-          } movimientos</td>`;
-        }
-      }
-    }
-    let colspan = num1.length > 0 && num2.length > 0 ? 2 : 1;
-    $id("options").innerHTML = `<table border='1'>
-    <thead>
-      <th>Jugadores</th>
-      <th>Victorias</th>
-      <th colspan='${colspan}'>Movimientos por partidas</th>
-    </thead>
-      <tbody>
-        <tr>
-          <td>${players[1].name}</td>
-          <td>${players[1].wins}</td>
-          ${num1}
-        </tr>
-        <tr>
-          <td>${players[2].name}</td>
-          <td>${players[2].wins}</td>
-          ${num2}
-        </tr>
-      </tbody>
-    </table>
-    <div class='info'> <div class='player' onClick='resetBtnGame()'>Reiniciar el juego </div> </div>`;
-  } else {
-    $id("options").innerHTML = `<table border='1'>
-    <thead>
-      <th>Victorias</th>
-    </thead>
-      <tbody>
-        <tr>
-          <td>${players[1].wins}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class='info'> <div class='player' onClick='resetBtnGame()'>Reiniciar el juego </div> </div>`;
-  }
-  $id("board").innerHTML = "";
-  $id("info").setAttribute("style", "display:none;");
+  // Construir filas de movimientos
+  const getMovesHtml = (p) => {
+    return Object.keys(p.state).map(key => {
+      const play = p.state[key];
+      const icon = play.name === "ganas" ? "🏆" : play.name === "empate" ? "🤝" : "❌";
+      return `<span>${icon} ${play.moves} movs.</span>`;
+    }).join(" | ");
+  };
+
+  $id("options").innerHTML = `
+    <div style="text-align:center; animation: appear 0.5s ease;">
+      <h2 style="color: #00d2ff;">RESUMEN DE BATALLA</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Jugador</th>
+            <th>Wins</th>
+            <th>Historial de Partidas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${p1.name || "Jugador 1"}</td>
+            <td><b style="font-size: 1.5rem; color: #2ecc71;">${p1.wins}</b></td>
+            <td style="font-size: 0.8rem;">${getMovesHtml(p1)}</td>
+          </tr>
+          ${isMulti ? `
+          <tr>
+            <td>${p2.name || "Jugador 2"}</td>
+            <td><b style="font-size: 1.5rem; color: #2ecc71;">${p2.wins}</b></td>
+            <td style="font-size: 0.8rem;">${getMovesHtml(p2)}</td>
+          </tr>` : ""}
+        </tbody>
+      </table>
+      <button class="reset-btn" onclick="resetBtnGame()">Nueva Partida</button>
+    </div>
+  `;
+  
+  $id("board").style.display = "none";
+  $id("info").style.display = "none";
 }
 
 function isEndByVertical(y) {
@@ -346,6 +329,16 @@ function play(x, y) {
       isEndByDiagonalUpward() ||
       isEndByTie()
     ) {
+      const winnerCells = []; // Opcional: podrías calcular qué celdas ganaron
+      
+      // Añade una clase de "congelado" al tablero para que no se pueda seguir pulsando
+      $id("board").style.pointerEvents = "none";
+      
+      // Al terminar el setTimeout de 2 seg, recuerda devolver los eventos
+      setTimeout(() => {
+          $id("board").style.pointerEvents = "auto";
+          // ... resto de tu código de reset ...
+      }, 2000);
       $("div[id^='1'] .message").innerText =
         players[1].state["play" + playState.numPlays].name.toUpperCase();
       $("div[id^='2'] .message").innerText =
