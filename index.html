@@ -3,44 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe Minimal</title>
+    <title>3 en Raya Pro</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1 class="main-title">3 EN RAYA</h1>
-    </header>
+    <h1 class="main-title">3 EN RAYA</h1>
 
     <main id="game-container" class="main-container">
         <aside class="side-panel">
-            <div class="control-group">
+            <div class="control-group" id="setup-menu">
                 <select onchange="changeMultiplayer(this.value)" id="multiplayer" class="minimal-select">
-                    <option value="1">👤 VS IA</option>
-                    <option value="2">👥 MULTIPLAYER</option>
+                    <option value="1">👤 CONTRA IA</option>
+                    <option value="2">👥 DOS JUGADORES</option>
                 </select>
+
+                <div id="piece-selector" class="piece-selector">
+                    <p>TU PIEZA</p>
+                    <div class="piece-options">
+                        <button class="piece-btn active" onclick="selectPiece('cross', this)">X</button>
+                        <button class="piece-btn" onclick="selectPiece('circle', this)">O</button>
+                    </div>
+                </div>
             </div>
 
             <div id="options" class="options-area">
-                <button class="start-btn visible" onclick="confirmStart()">INICIAR PARTIDA</button>
+                <button class="start-btn visible" onclick="confirmStart()">EMPEZAR JUEGO</button>
             </div>
 
             <div id="info" class="status-panel">
                 <div id="1" class="player-card active">
                     <div class="player-header">
-                        <img src="cross.svg" class="symbol-icon">
+                        <img src="cross.svg" class="symbol-icon" id="icon-1">
                         <span class="player-name">Jugador 1</span>
                     </div>
-                    <div class="score-badge">WINS: <span id="wins-1">0</span></div>
+                    <div class="score-badge">VICTORIAS: <span id="wins-1">0</span></div>
                 </div>
-                
                 <div class="divider">VS</div>
-
                 <div id="2" class="player-card">
                     <div class="player-header">
-                        <img src="circle.svg" class="symbol-icon">
+                        <img src="circle.svg" class="symbol-icon" id="icon-2">
                         <span class="player-name">Jugador 2</span>
                     </div>
-                    <div class="score-badge">WINS: <span id="wins-2">0</span></div>
+                    <div class="score-badge">VICTORIAS: <span id="wins-2">0</span></div>
                 </div>
             </div>
         </aside>
