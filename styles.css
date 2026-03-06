@@ -1,61 +1,66 @@
-/* Layout Base */
-.layout-wrapper {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-    min-height: 100vh;
-    background-color: #f4f7f6;
+:root {
+    --bg: #0a0a0a;
+    --panel: #141414;
+    --accent: #00e5ff;
+    --win: #00c853;
+    --lose: #ff1744;
+    --tie: #455a64;
+    --text: #f8fafc;
 }
 
-/* Columna Lateral (25%) */
-.panel-lateral {
-    flex: 0 0 300px;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
 }
 
-/* Columna Tablero (75%) */
-.contenedor-tablero {
-    flex: 1;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+.main-title { font-size: 0.8rem; letter-spacing: 0.6rem; opacity: 0.5; margin-bottom: 50px; }
+
+.main-container { display: flex; gap: 60px; max-width: 1000px; width: 100%; align-items: flex-start; }
+
+/* Selector de Pieza Visual */
+.piece-options { display: flex; gap: 10px; margin-top: 10px; }
+.piece-btn {
+    flex: 1; background: var(--panel); border: 1px solid rgba(255,255,255,0.1);
+    padding: 15px; border-radius: 8px; cursor: pointer; transition: 0.3s;
+}
+.piece-btn img { width: 25px; height: 25px; opacity: 0.3; }
+.piece-btn.active { border-color: var(--accent); background: rgba(0,229,255,0.05); }
+.piece-btn.active img { opacity: 1; }
+
+/* Tablero Grande y Estable */
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 150px);
+    grid-template-rows: repeat(3, 150px);
+    gap: 15px;
 }
 
-/* EL ESTADO DESACTIVADO (Importante) */
-.tablero-wrapper.desactivado {
-    position: relative;
-    opacity: 0.5;
-    pointer-events: none; /* Bloquea clics y scroll interno */
-    filter: grayscale(100%);
-    user-select: none;
+.cell {
+    background: var(--panel); border-radius: 4px;
+    display: flex; justify-content: center; align-items: center;
+    cursor: pointer; width: 150px; height: 150px;
 }
+.cell img { width: 80px; height: 80px; }
 
-/* Overlay opcional para reforzar el bloqueo visual */
-.tablero-wrapper.desactivado::after {
-    content: "TABLERO BLOQUEADO";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 4px;
-    font-weight: bold;
-    z-index: 10;
+/* Resumen Final en Castellano */
+.badge {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 800; border: 2px solid;
 }
+.badge.ganas { border-color: var(--win); color: var(--win); }
+.badge.pierdes { border-color: var(--lose); color: var(--lose); }
+.badge.empate { border-color: var(--tie); color: var(--tie); }
 
-/* Tablas */
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-th { background: #f8f9fa; }
+/* Feedback Botón */
+.start-btn {
+    width: 100%; margin-top: 20px; padding: 15px; background: white;
+    color: black; border: none; font-weight: 800; border-radius: 4px; cursor: pointer;
+}
+.start-btn:active { transform: scale(0.97); background: var(--accent); }
 
-/* Botones */
-button { width: 100%; padding: 10px; margin-bottom: 10px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
-.btn-danger { background: #e74c3c; color: white; }
-.btn-success { background: #2ecc71; color: white; }
-.btn-secundario { background: #3498db; color: white; }
+/* Estilos de paneles e info iguales al diseño "Moderno" previo... */
+.player-card { background: var(--panel); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; margin-bottom: 10px; }
+.player-card.active { border-color: var(--accent); }
