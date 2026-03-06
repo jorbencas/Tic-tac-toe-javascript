@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3 en Raya Moderno</title>
+    <title>Tic-Tac-Toe Minimal</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,16 +13,18 @@
 
     <main id="game-container" class="main-container">
         <aside class="side-panel">
-            <div id="setup-panel" class="setup-panel">
-                <div class="control-group">
-                    <label>MODO DE JUEGO</label>
-                    <select onchange="changeMultiplayer(this.value)" id="multiplayer" class="minimal-select">
-                        <option value="1">👤 VS IA</option>
-                        <option value="2">👥 MULTIPLAYER</option>
-                    </select>
-                </div>
+            <div class="control-group">
+                <select onchange="changeMultiplayer(this.value)" id="multiplayer" class="minimal-select">
+                    <option value="1">👤 VS IA</option>
+                    <option value="2">👥 MULTIPLAYER</option>
+                </select>
+            </div>
 
-                <div id="piece-selector" class="piece-selector">
+            <div id="options" class="options-area">
+                <button class="start-btn visible" onclick="confirmStart()">INICIAR PARTIDA</button>
+            </div>
+
+            <div id="piece-selector" class="piece-selector">
                     <label>ELIGE TU PIEZA</label>
                     <div class="piece-options">
                         <button class="piece-btn active" onclick="selectPiece('cross', this)">
@@ -34,36 +36,30 @@
                     </div>
                 </div>
 
-                <div id="name-inputs" style="display:none; margin-top:15px;">
-                    <input type="text" id="n1" class="minimal-input" placeholder="Nombre Jugador 1">
-                    <input type="text" id="n2" class="minimal-input" placeholder="Nombre Jugador 2">
-                </div>
 
-                <button class="start-btn" onclick="confirmStart()">EMPEZAR SERIE</button>
-            </div>
-
-            <div id="info" class="status-panel" style="display:none;">
+            <div id="info" class="status-panel">
                 <div id="1" class="player-card active">
                     <div class="player-header">
-                        <img src="cross.svg" class="symbol-icon" id="icon-1">
+                        <img src="cross.svg" class="symbol-icon">
                         <span class="player-name">Jugador 1</span>
                     </div>
-                    <div class="score-badge">VICTORIAS: <span id="wins-1">0</span></div>
+                    <div class="score-badge">WINS: <span id="wins-1">0</span></div>
                 </div>
+                
                 <div class="divider">VS</div>
+
                 <div id="2" class="player-card">
                     <div class="player-header">
-                        <img src="circle.svg" class="symbol-icon" id="icon-2">
-                        <span class="player-name">Bot Gemini</span>
+                        <img src="circle.svg" class="symbol-icon">
+                        <span class="player-name">Jugador 2</span>
                     </div>
-                    <div class="score-badge">VICTORIAS: <span id="wins-2">0</span></div>
+                    <div class="score-badge">WINS: <span id="wins-2">0</span></div>
                 </div>
             </div>
         </aside>
 
         <section class="board-wrapper">
             <div class="board" id="board"></div>
-            <div id="round-indicator" class="round-indicator"></div>
         </section>
     </main>
 
