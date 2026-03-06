@@ -3,50 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión Pro</title>
+    <title>3 en Raya Moderno</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
 </head>
 <body>
+    <header>
+        <h1 class="main-title">3 EN RAYA</h1>
+    </header>
 
-    <div class="layout-wrapper">
-        <aside class="panel-lateral">
-            <h2>Configuración</h2>
-            <div class="card-control">
-                <p>Estado: <span id="estado-label">ACTIVO</span></p>
-                <button id="btn-toggle" class="btn-danger">Desactivar Tablero</button>
+    <main id="game-container" class="main-container">
+        <aside class="side-panel">
+            <div id="setup-panel" class="setup-panel">
+                <div class="control-group">
+                    <label>MODO DE JUEGO</label>
+                    <select onchange="changeMultiplayer(this.value)" id="multiplayer" class="minimal-select">
+                        <option value="1">👤 VS IA</option>
+                        <option value="2">👥 MULTIPLAYER</option>
+                    </select>
+                </div>
+
+                <div id="piece-selector" class="piece-selector">
+                    <label>ELIGE TU PIEZA</label>
+                    <div class="piece-options">
+                        <button class="piece-btn active" onclick="selectPiece('cross', this)">
+                            <img src="cross.svg">
+                        </button>
+                        <button class="piece-btn" onclick="selectPiece('circle', this)">
+                            <img src="circle.svg">
+                        </button>
+                    </div>
+                </div>
+
+                <div id="name-inputs" style="display:none; margin-top:15px;">
+                    <input type="text" id="n1" class="minimal-input" placeholder="Nombre Jugador 1">
+                    <input type="text" id="n2" class="minimal-input" placeholder="Nombre Jugador 2">
+                </div>
+
+                <button class="start-btn" onclick="confirmStart()">EMPEZAR SERIE</button>
             </div>
-            
-            <div class="card-control">
-                <h3>Acciones de Datos</h3>
-                <button id="btn-add" class="btn-secundario">Añadir Fila</button>
-                <button id="btn-clear" class="btn-outline">Limpiar Consola</button>
+
+            <div id="info" class="status-panel" style="display:none;">
+                <div id="1" class="player-card active">
+                    <div class="player-header">
+                        <img src="cross.svg" class="symbol-icon" id="icon-1">
+                        <span class="player-name">Jugador 1</span>
+                    </div>
+                    <div class="score-badge">VICTORIAS: <span id="wins-1">0</span></div>
+                </div>
+                <div class="divider">VS</div>
+                <div id="2" class="player-card">
+                    <div class="player-header">
+                        <img src="circle.svg" class="symbol-icon" id="icon-2">
+                        <span class="player-name">Bot Gemini</span>
+                    </div>
+                    <div class="score-badge">VICTORIAS: <span id="wins-2">0</span></div>
+                </div>
             </div>
         </aside>
 
-        <main class="contenedor-tablero">
-            <header class="header-tablero">
-                <h1>Tablero de Operaciones</h1>
-                <input type="text" id="buscador" placeholder="Filtrar registros...">
-            </header>
+        <section class="board-wrapper">
+            <div class="board" id="board"></div>
+            <div id="round-indicator" class="round-indicator"></div>
+        </section>
+    </main>
 
-            <div id="tablero-interactivo" class="tablero-wrapper">
-                <table id="tabla-principal">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Fecha</th>
-                            <th>Usuario</th>
-                            <th>Actividad</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpo-tabla">
-                        </tbody>
-                </table>
-            </div>
-        </main>
+    <section id="final-summary" class="summary-view" style="display:none;"></section>
+
+    <div id="announcement" class="announcement-overlay">
+        <p id="announcement-text"></p>
+        <h2 id="winner-display"></h2>
     </div>
 
+    <script src="index.js"></script>
 </body>
 </html>
