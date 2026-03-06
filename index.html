@@ -3,71 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3 en Raya - Edición Limpia</title>
+    <title>3 en Raya Moderno</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1 class="main-title">3 EN RAYA</h1>
+    <header>
+        <h1 class="main-title">3 EN RAYA</h1>
+    </header>
 
-    <main id="contenedor-juego" class="main-container">
-        <aside class="panel-lateral">
-            <div id="menu-configuracion">
-                <p class="etiqueta">MODO DE JUEGO</p>
-                <select onchange="cambiarModo(this.value)" id="selector-modo" class="input-minimal">
-                    <option value="1">👤 CONTRA IA</option>
-                    <option value="2">👥 DOS JUGADORES</option>
-                </select>
+    <main id="game-container" class="main-container">
+        <aside class="side-panel">
+            <div id="setup-panel" class="setup-panel">
+                <div class="control-group">
+                    <label>MODO DE JUEGO</label>
+                    <select onchange="changeMultiplayer(this.value)" id="multiplayer" class="minimal-select">
+                        <option value="1">👤 VS IA</option>
+                        <option value="2">👥 MULTIPLAYER</option>
+                    </select>
+                </div>
 
-                <div id="selector-pieza" class="selector-pieza">
-                    <p class="etiqueta">ELIGE TU PIEZA</p>
-                    <div class="opciones-pieza">
-                        <div class="pieza-btn activa" onclick="elegirPieza('cross', this)">
-                            <img src="cross.svg" alt="Equis">
-                        </div>
-                        <div class="pieza-btn" onclick="elegirPieza('circle', this)">
-                            <img src="circle.svg" alt="Círculo">
-                        </div>
+                <div id="piece-selector" class="piece-selector">
+                    <label>ELIGE TU PIEZA</label>
+                    <div class="piece-options">
+                        <button class="piece-btn active" onclick="selectPiece('cross', this)">
+                            <img src="cross.svg">
+                        </button>
+                        <button class="piece-btn" onclick="selectPiece('circle', this)">
+                            <img src="circle.svg">
+                        </button>
                     </div>
                 </div>
-                
-                <div id="area-nombres" style="display:none; margin-top:20px;">
-                    <input type="text" id="nombre-j1" placeholder="Nombre Jugador 1" class="input-minimal">
-                    <input type="text" id="nombre-j2" placeholder="Nombre Jugador 2" class="input-minimal">
+
+                <div id="name-inputs" style="display:none; margin-top:15px;">
+                    <input type="text" id="n1" class="minimal-input" placeholder="Nombre Jugador 1">
+                    <input type="text" id="n2" class="minimal-input" placeholder="Nombre Jugador 2">
                 </div>
 
-                <button class="btn-inicio" onclick="confirmarInicio()">EMPEZAR PARTIDA</button>
+                <button class="start-btn" onclick="confirmStart()">EMPEZAR SERIE</button>
             </div>
 
-            <div id="marcador" class="marcador-panel">
-                <div id="p1" class="tarjeta-jugador activa">
-                    <div class="info-cabecera">
-                        <img src="cross.svg" class="icono-min" id="img-p1">
-                        <span id="txt-p1">Jugador 1</span>
+            <div id="info" class="status-panel" style="display:none;">
+                <div id="1" class="player-card active">
+                    <div class="player-header">
+                        <img src="cross.svg" class="symbol-icon" id="icon-1">
+                        <span class="player-name">Jugador 1</span>
                     </div>
-                    <div class="puntos">Victorias: <span id="puntos-1">0</span></div>
+                    <div class="score-badge">VICTORIAS: <span id="wins-1">0</span></div>
                 </div>
-                <div class="divisor-vs">VS</div>
-                <div id="p2" class="tarjeta-jugador">
-                    <div class="info-cabecera">
-                        <img src="circle.svg" class="icono-min" id="img-p2">
-                        <span id="txt-p2">Bot Gemini</span>
+                <div class="divider">VS</div>
+                <div id="2" class="player-card">
+                    <div class="player-header">
+                        <img src="circle.svg" class="symbol-icon" id="icon-2">
+                        <span class="player-name">Bot Gemini</span>
                     </div>
-                    <div class="puntos">Victorias: <span id="puntos-2">0</span></div>
+                    <div class="score-badge">VICTORIAS: <span id="wins-2">0</span></div>
                 </div>
             </div>
         </aside>
 
-        <section class="contenedor-tablero">
-            <div class="tablero" id="tablero"></div>
-            <div id="info-ronda" class="info-ronda"></div>
+        <section class="board-wrapper">
+            <div class="board" id="board"></div>
+            <div id="round-indicator" class="round-indicator"></div>
         </section>
     </main>
 
-    <section id="resumen-final" class="vista-resumen" style="display:none;"></section>
+    <section id="final-summary" class="summary-view" style="display:none;"></section>
 
-    <div id="anuncio" class="overlay-anuncio">
-        <p id="anuncio-texto"></p>
-        <h2 id="anuncio-ganador"></h2>
+    <div id="announcement" class="announcement-overlay">
+        <p id="announcement-text"></p>
+        <h2 id="winner-display"></h2>
     </div>
 
     <script src="index.js"></script>

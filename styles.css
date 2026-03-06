@@ -1,61 +1,66 @@
 :root {
-    --fondo: #0a0a0a;
+    --bg: #0a0a0a;
     --panel: #141414;
-    --acento: #00e5ff;
-    --verde: #00c853;
-    --rojo: #ff1744;
-    --gris: #444;
+    --accent: #00e5ff;
+    --win: #00c853;
+    --lose: #ff1744;
+    --tie: #455a64;
+    --text: #f8fafc;
 }
 
 body {
-    background-color: var(--fondo);
-    color: white;
+    background-color: var(--bg);
+    color: var(--text);
     font-family: 'Inter', sans-serif;
-    display: flex; flex-direction: column; align-items: center; padding: 50px 20px;
+    display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
 }
 
-.main-container { display: flex; gap: 50px; max-width: 1000px; width: 100%; }
+.main-title { font-size: 0.8rem; letter-spacing: 0.6rem; opacity: 0.5; margin-bottom: 50px; }
 
-/* SELECTOR DE PIEZA VISUAL */
-.etiqueta { font-size: 0.7rem; opacity: 0.5; margin: 15px 0 8px 0; letter-spacing: 1px; }
-.opciones-pieza { display: flex; gap: 15px; }
-.pieza-btn {
-    flex: 1; background: var(--panel); border: 2px solid #222; 
-    padding: 15px; cursor: pointer; border-radius: 8px; 
-    display: flex; justify-content: center; transition: 0.2s;
+.main-container { display: flex; gap: 60px; max-width: 1000px; width: 100%; align-items: flex-start; }
+
+/* Selector de Pieza Visual */
+.piece-options { display: flex; gap: 10px; margin-top: 10px; }
+.piece-btn {
+    flex: 1; background: var(--panel); border: 1px solid rgba(255,255,255,0.1);
+    padding: 15px; border-radius: 8px; cursor: pointer; transition: 0.3s;
 }
-.pieza-btn img { width: 30px; height: 30px; opacity: 0.3; }
-.pieza-btn.activa { border-color: var(--acento); }
-.pieza-btn.activa img { opacity: 1; }
+.piece-btn img { width: 25px; height: 25px; opacity: 0.3; }
+.piece-btn.active { border-color: var(--accent); background: rgba(0,229,255,0.05); }
+.piece-btn.active img { opacity: 1; }
 
-/* TABLERO FIJO */
-.tablero {
+/* Tablero Grande y Estable */
+.board {
     display: grid;
     grid-template-columns: repeat(3, 150px);
     grid-template-rows: repeat(3, 150px);
     gap: 15px;
-    width: 480px; height: 480px;
 }
-.celda {
-    background: var(--panel); border: 1px solid rgba(255,255,255,0.05);
-    width: 150px; height: 150px; display: flex; justify-content: center; align-items: center;
-    cursor: pointer;
-}
-.celda img { width: 80px; height: 80px; }
 
-/* BOTÓN INICIO */
-.btn-inicio {
-    width: 100%; margin-top: 25px; padding: 18px; background: white; 
-    border: none; font-weight: 800; cursor: pointer; border-radius: 4px;
+.cell {
+    background: var(--panel); border-radius: 4px;
+    display: flex; justify-content: center; align-items: center;
+    cursor: pointer; width: 150px; height: 150px;
 }
-.btn-inicio:active { transform: scale(0.97); background: var(--acento); }
+.cell img { width: 80px; height: 80px; }
 
-/* RESUMEN FINAL */
-.circulo-estado {
-    width: 45px; height: 45px; border-radius: 50%; border: 2px solid;
-    display: inline-flex; align-items: center; justify-content: center;
-    font-weight: 900; margin: 0 5px;
+/* Resumen Final en Castellano */
+.badge {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 800; border: 2px solid;
 }
-.ganado { border-color: var(--verde); color: var(--verde); }
-.perdido { border-color: var(--rojo); color: var(--rojo); }
-.empate { border-color: var(--gris); color: var(--gris); }
+.badge.ganas { border-color: var(--win); color: var(--win); }
+.badge.pierdes { border-color: var(--lose); color: var(--lose); }
+.badge.empate { border-color: var(--tie); color: var(--tie); }
+
+/* Feedback Botón */
+.start-btn {
+    width: 100%; margin-top: 20px; padding: 15px; background: white;
+    color: black; border: none; font-weight: 800; border-radius: 4px; cursor: pointer;
+}
+.start-btn:active { transform: scale(0.97); background: var(--accent); }
+
+/* Estilos de paneles e info iguales al diseño "Moderno" previo... */
+.player-card { background: var(--panel); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; margin-bottom: 10px; }
+.player-card.active { border-color: var(--accent); }
