@@ -1,70 +1,77 @@
 :root {
     --bg: #050505;
-    --panel: #111;
+    --card-bg: #0f0f0f;
+    --input-bg: #161616;
     --accent: #00e5ff;
     --win: #00e676;
     --lose: #ff1744;
     --tie: #78909c;
-    --input-bg: #181818;
 }
 
 body {
     background-color: var(--bg);
     color: white;
-    font-family: 'Inter', system-ui, sans-serif;
-    display: flex; flex-direction: column; align-items: center; padding-top: 50px; margin: 0;
+    font-family: 'Inter', sans-serif;
+    margin: 0; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
 }
 
-.main-title { font-size: 0.7rem; letter-spacing: 12px; opacity: 0.3; margin-bottom: 50px; font-weight: 300; }
-.main-container { display: flex; gap: 80px; width: 1100px; justify-content: center; }
+.main-title { font-size: 0.6rem; letter-spacing: 15px; opacity: 0.2; margin: 40px 0; font-weight: 300; }
 
-/* INPUTS GRANDES */
+/* DISEÑO 2 COLUMNAS */
+.main-layout {
+    display: flex; gap: 40px; width: 100%; max-width: 1100px;
+    padding: 20px; align-items: stretch;
+}
+
+.left-column { flex: 1; max-width: 400px; }
+.right-column { flex: 1.5; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.01); border-radius: 20px; }
+
+/* INPUTS OSCUROS Y GRANDES */
 .big-input {
-    width: 100%; padding: 22px; background: var(--input-bg); border: 1px solid #333;
-    color: white; border-radius: 8px; font-size: 1.1rem; margin-bottom: 15px; outline: none;
+    width: 100%; padding: 20px; background: var(--input-bg); border: 1px solid #222;
+    color: white; border-radius: 10px; font-size: 1rem; margin-bottom: 15px; outline: none;
 }
 
-/* SELECTOR DE PIEZA: TARJETAS GRANDES */
-.section-label { font-size: 0.65rem; letter-spacing: 2px; opacity: 0.5; display: block; margin-bottom: 12px; }
-.piece-cards { display: flex; gap: 15px; margin-bottom: 30px; }
+/* SELECTOR DE PIEZA (TARJETAS GRANDES) */
+.piece-grid { display: flex; gap: 15px; margin-top: 10px; }
 .piece-card {
-    flex: 1; background: var(--panel); border: 2px solid #222; border-radius: 12px;
-    padding: 25px; cursor: pointer; display: flex; flex-direction: column; 
-    align-items: center; gap: 15px; transition: all 0.3s ease;
+    flex: 1; background: var(--card-bg); border: 2px solid #222; border-radius: 15px;
+    padding: 30px 10px; cursor: pointer; text-align: center; transition: 0.3s;
 }
-.piece-card span { font-size: 0.7rem; font-weight: 800; opacity: 0.4; letter-spacing: 1px; }
-.card-icon { width: 50px; height: 50px; opacity: 0.15; filter: grayscale(1); transition: 0.3s; }
+.piece-card img { width: 45px; height: 45px; opacity: 0.1; filter: grayscale(1); margin-bottom: 10px; }
+.piece-card span { display: block; font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; opacity: 0.4; }
 
-.piece-card.active { border-color: var(--accent); background: rgba(0, 229, 255, 0.05); }
-.piece-card.active .card-icon { opacity: 1; filter: none; transform: scale(1.1); }
+.piece-card.active { border-color: var(--accent); background: rgba(0,229,255,0.03); }
+.piece-card.active img { opacity: 1; filter: none; transform: translateY(-5px); }
 .piece-card.active span { opacity: 1; color: var(--accent); }
 
-/* TABLERO ESTABLE 150px */
-.board { display: grid; grid-template-columns: repeat(3, 160px); grid-template-rows: repeat(3, 160px); gap: 18px; }
+/* TABLERO FIJO 150PX */
+.board { display: grid; grid-template-columns: repeat(3, 150px); grid-template-rows: repeat(3, 150px); gap: 15px; }
 .cell {
-    background: var(--panel); width: 160px; height: 160px; border-radius: 12px;
+    background: var(--card-bg); width: 150px; height: 150px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center; cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.02); transition: 0.2s;
+    border: 1px solid rgba(255,255,255,0.03);
 }
-.cell:hover { background: #1a1a1a; }
-.cell img { width: 90px; height: 90px; }
+.cell img { width: 80px; height: 80px; }
 
-/* BOTÓN MEGA */
+/* BOTÓN EMPEZAR */
 .mega-btn {
-    width: 100%; padding: 24px; background: white; color: black; border: none;
-    font-weight: 900; border-radius: 8px; cursor: pointer; font-size: 1rem; letter-spacing: 1px;
+    width: 100%; padding: 22px; background: white; color: black; border: none;
+    font-weight: 900; border-radius: 10px; cursor: pointer; margin-top: 20px;
 }
-.mega-btn:active { transform: scale(0.97); background: var(--accent); }
 
-/* RESUMEN FINAL G E P */
-.res-circle {
-    width: 50px; height: 50px; border-radius: 50%; border: 3px solid;
-    display: inline-flex; align-items: center; justify-content: center; font-weight: 900; margin: 0 8px; font-size: 1.2rem;
+/* MARCADOR LATERAL */
+.player-status { background: var(--card-bg); padding: 25px; border-radius: 15px; border: 1px solid #222; margin-bottom: 10px; }
+.player-status.active { border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.side-icon { width: 25px; vertical-align: middle; margin-right: 10px; }
+.pts { font-weight: 900; font-size: 1.2rem; margin-top: 15px; color: var(--accent); }
+
+/* RESUMEN FINAL G-E-P */
+.res-dot {
+    width: 45px; height: 45px; border-radius: 50%; border: 3px solid;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 900; margin: 5px;
 }
-.res-circle.G { border-color: var(--win); color: var(--win); }
-.res-circle.P { border-color: var(--lose); color: var(--lose); }
-.res-circle.E { border-color: var(--tie); color: var(--tie); }
-
-/* TARJETAS PUNTUACIÓN */
-.score-card { background: var(--panel); padding: 30px; border-radius: 16px; border: 1px solid #222; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-.score-card.active { border-color: var(--accent); box-shadow: 0 0 20px rgba(0,229,255,0.1); }
+.res-dot.G { border-color: var(--win); color: var(--win); }
+.res-dot.P { border-color: var(--lose); color: var(--lose); }
+.res-dot.E { border-color: var(--tie); color: var(--tie); }
