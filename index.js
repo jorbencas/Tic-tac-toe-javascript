@@ -1,145 +1,139 @@
-const $ = (s) => document.querySelector(s);
-const $id = (i) => document.getElementById(i);
-
-let juego = {
-    modo: 1, ronda: 1, piezaUser: 'cross', activo: 1, tablero: [],
-    jugadores: {
-        1: { nombre: "Jugador 1", icono: "cross", victorias: 0, historial: [] },
-        2: { nombre: "IA", icono: "circle", victorias: 0, historial: [] }
+const $id = (id) => document.getElementById(id);
+let game = {
+    ronda: 1, modo: 1, pieza: 'cross', activo: 1, tablero: [],
+    p: {
+        1: { nombre: "J1", icono: "cross", wins: 0, log: [] },
+        2: { nombre: "IA", icono: "circle", wins: 0, log: [] }
     }
 };
 
-function cambiarModo(val) {
-    juego.modo = parseInt(val);
-    $id("name-inputs").style.display = juego.modo === 2 ? "block" : "none";
-    $id("piece-selector").style.display = juego.modo === 1 ? "block" : "none";
+function cambiarModo(v) {
+    game.modo = parseInt(v);
+    $id("name-inputs").style.display = game.modo === 2 ? "block" : "none";
+    $id("piece-selector").style.display = game.modo === 1 ? "block" : "none";
 }
 
-function seleccionarPieza(tipo, btn) {
-    juego.piezaUser = tipo;
-    document.querySelectorAll('.piece-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+function seleccionarPieza(tipo, elemento) {
+    game.pieza = tipo;
+    document.querySelectorAll('.piece-card').forEach(c => c.classList.remove('active'));
+    elemento.classList.add('active');
 }
 
 function confirmarInicio() {
-    juego.jugadores[1].nombre = $id("n1")?.value.trim() || "Jugador 1";
-    juego.jugadores[2].nombre = juego.modo === 2 ? ($id("n2")?.value.trim() || "Jugador 2") : "IA";
+    game.p[1].nombre = $id("n1").value || "Jugador 1";
+    game.p[2].nombre = game.modo === 2 ? ($id("n2").value || "Jugador 2") : "IA Gemini";
 
-    if (juego.modo === 1) {
-        juego.jugadores[1].icono = juego.piezaUser;
-        juego.jugadores[2].icono = juego.piezaUser === 'cross' ? 'circle' : 'cross';
+    if(game.modo === 1) {
+        game.p[1].icono = game.pieza;
+        game.p[2].icono = game.pieza === 'cross' ? 'circle' : 'cross';
     } else {
-        juego.jugadores[1].icono = 'cross'; juego.jugadores[2].icono = 'circle';
+        game.p[1].icono = 'cross'; game.p[2].icono = 'circle';
     }
 
-    $id("icon-1").src = `${juego.jugadores[1].icono}.svg`;
-    $id("icon-2").src = `${juego.jugadores[2].icono}.svg`;
-    $id("name-1").innerText = juego.jugadores[1].nombre;
-    $id("name-2").innerText = juego.jugadores[2].nombre;
-
+    $id("icon-1").src = `${game.p[1].icono}.svg`;
+    $id("icon-2").src = `${game.p[2].icono}.svg`;
+    $id("name-1").innerText = game.p[1].nombre;
+    $id("name-2").innerText = game.p[2].nombre;
     $id("setup-panel").style.display = "none";
     $id("scoreboard").style.display = "block";
-    iniciarRonda();
+    nuevaRonda();
 }
 
-function iniciarRonda() {
-    juego.tablero = Array.from({length: 3}, () => Array(3).fill(""));
-    juego.activo = 1;
-    $id("round-info").innerText = `RONDA ${juego.ronda} DE 3`;
-    $id("board").innerHTML = juego.tablero.flatMap((f, y) => 
-        f.map((_, x) => `<div class='cell' onclick='clicCelda(${x},${y})' id='c-${y}-${x}'></div>`)
+function nuevaRonda() {
+    game.tablero = Array.from({length: 3}, () => Array(3).fill(""));
+    game.activo = 1;
+    $id("round-info").innerText = `RONDA ${game.ronda} / 3`;
+    $id("board").innerHTML = game.tablero.flatMap((f, y) => 
+        f.map((_, x) => `<div class='cell' onclick='ejecutarMovimiento(${x},${y})' id='c-${y}-${x}'></div>`)
     ).join("");
-    toggleUIActive();
+    actualizarUI();
 }
 
-function clicCelda(x, y) {
-    if (juego.tablero[y][x] !== "") return;
-    juego.tablero[y][x] = juego.activo;
-    $id(`c-${y}-${x}`).innerHTML = `<img src="${juego.jugadores[juego.activo].icono}.svg">`;
+function ejecutarMovimiento(x, y) {
+    if (game.tablero[y][x] !== "") return;
+    game.tablero[y][x] = game.activo;
+    $id(`c-${y}-${x}`).innerHTML = `<img src="${game.p[game.activo].icono}.svg">`;
 
     if (verificarGanador(y, x)) {
-        finalizarRonda("victoria");
-    } else if (juego.tablero.flat().every(c => c !== "")) {
-        finalizarRonda("empate");
+        gestionarFin("victoria");
+    } else if (game.tablero.flat().every(c => c !== "")) {
+        gestionarFin("empate");
     } else {
-        juego.activo = juego.activo === 1 ? 2 : 1;
-        toggleUIActive();
-        if (juego.modo === 1 && juego.activo === 2) {
+        game.activo = game.activo === 1 ? 2 : 1;
+        actualizarUI();
+        if(game.modo === 1 && game.activo === 2) {
             $id("board").style.pointerEvents = "none";
-            setTimeout(turnoIA, 600);
+            setTimeout(iaPro, 600);
         }
     }
 }
 
-function toggleUIActive() {
-    $id("p1").classList.toggle("active", juego.activo === 1);
-    $id("p2").classList.toggle("active", juego.activo === 2);
+function actualizarUI() {
+    $id("p1").classList.toggle("active", game.activo === 1);
+    $id("p2").classList.toggle("active", game.activo === 2);
 }
 
-function finalizarRonda(tipo) {
-    let t1, t2;
-    if (tipo === "victoria") {
-        juego.jugadores[juego.activo].victorias++;
-        juego.jugadores[juego.activo].historial.push('G');
-        juego.jugadores[juego.activo === 1 ? 2 : 1].historial.push('P');
-        t1 = "RONDA GANADA POR";
-        t2 = juego.jugadores[juego.activo].nombre.toUpperCase();
+function gestionarFin(res) {
+    if (res === "victoria") {
+        game.p[game.activo].wins++;
+        game.p[game.activo].log.push('G');
+        game.p[game.activo === 1 ? 2 : 1].log.push('P');
+        $id("toast-sub").innerText = "VICTORIA PARA";
+        $id("toast-main").innerText = game.p[game.activo].nombre.toUpperCase();
     } else {
-        juego.jugadores[1].historial.push('E');
-        juego.jugadores[2].historial.push('E');
-        t1 = "RESULTADO"; t2 = "EMPATE";
+        game.p[1].log.push('E'); game.p[2].log.push('E');
+        $id("toast-sub").innerText = "ESTA RONDA ES UN"; $id("toast-main").innerText = "EMPATE";
     }
 
-    $id("wins-1").innerText = juego.jugadores[1].victorias;
-    $id("wins-2").innerText = juego.jugadores[2].victorias;
-    $id("announcement-text").innerText = t1;
-    $id("winner-display").innerText = t2;
-    $id("announcement").classList.add("show");
+    $id("wins-1").innerText = game.p[1].wins;
+    $id("wins-2").innerText = game.p[2].wins;
+    $id("toast").classList.add("show");
 
     setTimeout(() => {
-        $id("announcement").classList.remove("show");
-        if (juego.ronda < 3) {
-            juego.ronda++; iniciarRonda();
+        $id("toast").classList.remove("show");
+        if (game.ronda < 3) {
+            game.ronda++; nuevaRonda();
             $id("board").style.pointerEvents = "auto";
-        } else { mostrarResumen(); }
-    }, 1600);
+        } else {
+            pantallaFinal();
+        }
+    }, 1500);
 }
 
-function mostrarResumen() {
+function pantallaFinal() {
     $id("game-container").style.display = "none";
     const fs = $id("final-summary");
     fs.style.display = "block";
-
-    const getH = (jug) => jug.historial.map(h => `<div class="badge ${h}">${h}</div>`).join("");
+    const renderLog = (jug) => jug.log.map(l => `<div class="res-circle ${l}">${l}</div>`).join("");
 
     fs.innerHTML = `
-        <h2 style="letter-spacing:5px; font-weight:300; margin-bottom:40px">SERIE COMPLETADA</h2>
-        <div style="display:flex; justify-content:space-around; align-items:center; margin-bottom:50px">
+        <h2 style="letter-spacing:8px; font-weight:300; margin-bottom:60px">RESULTADOS DE LA SERIE</h2>
+        <div style="display:flex; justify-content:space-around; align-items:center; margin-bottom:80px">
             <div>
-                <p style="opacity:0.4; font-size:0.75rem">${juego.jugadores[1].nombre}</p>
-                <h3 style="font-size:3.5rem; margin:10px 0">${juego.jugadores[1].victorias}</h3>
-                <div class="badge-container">${getH(juego.jugadores[1])}</div>
+                <p style="opacity:0.3; font-size:0.8rem; margin-bottom:20px">${game.p[1].nombre}</p>
+                <h3 style="font-size:5rem; margin:0">${game.p[1].wins}</h3>
+                <div style="margin-top:20px">${renderLog(game.p[1])}</div>
             </div>
-            <div style="opacity:0.1; font-size:2rem">VS</div>
+            <div style="opacity:0.05; font-size:4rem; font-weight:900">VS</div>
             <div>
-                <p style="opacity:0.4; font-size:0.75rem">${juego.jugadores[2].nombre}</p>
-                <h3 style="font-size:3.5rem; margin:10px 0">${juego.jugadores[2].victorias}</h3>
-                <div class="badge-container">${getH(juego.jugadores[2])}</div>
+                <p style="opacity:0.3; font-size:0.8rem; margin-bottom:20px">${game.p[2].nombre}</p>
+                <h3 style="font-size:5rem; margin:0">${game.p[2].wins}</h3>
+                <div style="margin-top:20px">${renderLog(game.p[2])}</div>
             </div>
         </div>
-        <button class="start-btn" style="background:transparent; color:white; border:1px solid white" onclick="location.reload()">NUEVA SERIE</button>
+        <button class="mega-btn" style="background:transparent; color:white; border:1px solid #333" onclick="location.reload()">VOLVER AL MENÚ</button>
     `;
 }
 
 function verificarGanador(y, x) {
-    const act = juego.activo; const t = juego.tablero;
-    return (t[y].every(c => c === act) || t.every(r => r[x] === act) || (y === x && t.every((r, i) => r[i] === act)) || (y + x === 2 && t.every((r, i) => r[2-i] === act)));
+    const a = game.activo; const t = game.tablero;
+    return (t[y].every(c => c === a) || t.every(r => r[x] === a) || (y === x && t.every((r, i) => r[i] === a)) || (y + x === 2 && t.every((r, i) => r[2-i] === a)));
 }
 
-function turnoIA() {
-    const t = juego.tablero; const vacias = [];
-    for(let y=0; y<3; y++) for(let x=0; x<3; x++) if(t[y][x]==="") vacias.push({x,y});
-    const test = (jug) => { for(let s of vacias) { t[s.y][s.x] = jug; let w = verificarGanador(s.y, s.x); t[s.y][s.x] = ""; if(w) return s; } return null; };
-    const m = test(2) || test(1) || (t[1][1]==="" ? {x:1,y:1} : vacias[0]);
-    $id("board").style.pointerEvents = "auto"; if(m) clicCelda(m.x, m.y);
+function iaPro() {
+    const t = game.tablero; const v = [];
+    for(let y=0; y<3; y++) for(let x=0; x<3; x++) if(t[y][x]==="") v.push({x,y});
+    const test = (j) => { for(let s of v) { t[s.y][s.x] = j; let w = verificarGanador(s.y, s.x); t[s.y][s.x] = ""; if(w) return s; } return null; };
+    const m = test(2) || test(1) || (t[1][1]==="" ? {x:1,y:1} : v[0]);
+    $id("board").style.pointerEvents = "auto"; if(m) ejecutarMovimiento(m.x, m.y);
 }
