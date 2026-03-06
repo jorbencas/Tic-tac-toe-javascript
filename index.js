@@ -32,8 +32,9 @@ function resetBtnGame() {
   dispatch("CHANGE_MULTIPLAYER", 1);
   dispatch("RESET_NUM_PLAYS");
   dispatch("RESET_PLAYSTATE");
-  $id("multiplayer").setAttribute("style", "display:block;");
-  $id("info").setAttribute("style", "display:flex;");
+  $id("board").style.display = "grid";
+  $id("multiplayer").style.display = "block";
+  $id("info").style.display = "flex";
   $id("options").innerHTML = "";
   resetBoard();
 }
@@ -179,130 +180,64 @@ function resetBoard() {
 }
 
 function nextPlay(y, x) {
-  let position = {
-    cell: -1,
-    row: -1,
+  const b = playState.board;
+  const emptyCells = [];
+  
+  // 1. Obtener todas las celdas vacías
+  for (let y = 0; y < 3; y++) {
+    for (let x = 0; x < 3; x++) {
+      if (b[y][x] === "") emptyCells.push({y, x});
+    }
+  }
+
+  // Función auxiliar para simular un movimiento y ver si alguien gana
+  const checkMove = (player) => {
+    for (let cell of emptyCells) {
+      b[cell.y][cell.x] = player;
+      // Reutilizamos tus funciones de chequeo (ajustadas para devolver true/false sin dispatch)
+      const win = checkVirtualWin(cell.y, cell.x, player);
+      b[cell.y][cell.x] = ""; // Revertir simulación
+      if (win) return cell;
+    }
+    return null;
   };
-  let last = playState.board.length - 1;
 
-  //DiagonalFalling
-  if (
-    playState.board[last][last] == 1 &&
-    playState.board[last - 1][last - 1] == 1
-  ) {
-    position.row = 0;
-    position.cell = 0;
-  }
-  if (playState.board[0][0] == 1 && playState.board[last - 1][last - 1] == 1) {
-    position.row = last;
-    position.cell = last;
-  }
-  if (playState.board[0][0] == 1 && playState.board[last][last] == 1) {
-    position.row = last - 1;
-    position.cell = last - 1;
-  }
+  // ESTRATEGIA:
+  // A. ¿Puedo ganar yo (Jugador 2)?
+  const winMove = checkMove(2);
+  if (winMove) return { row: winMove.y, cell: winMove.x };
 
-  if (
-    playState.board[last][0] == 1 &&
-    playState.board[last - 1][last - 1] == 1
-  ) {
-    //DiagonalUpward
-    position.row = 0;
-    position.cell = last;
-  }
-  if (
-    playState.board[0][last] == 1 &&
-    playState.board[last - 1][last - 1] == 1
-  ) {
-    position.row = last;
-    position.cell = 0;
-  }
-  if (playState.board[last][0] == 1 && playState.board[0][last] == 1) {
-    position.row = last - 1;
-    position.cell = last - 1;
+  // B. ¿Va a ganar el Jugador 1? ¡Bloquéalo!
+  const blockMove = checkMove(1);
+  if (blockMove) return { row: blockMove.y, cell: blockMove.x };
+
+  // C. Tomar el centro si está libre
+  if (b[1][1] === "") return { row: 1, cell: 1 };
+
+  // D. Tomar una esquina al azar
+  const corners = emptyCells.filter(c => (c.x === 0 || c.x === 2) && (c.y === 0 || c.y === 2));
+  if (corners.length > 0) {
+    const randomCorner = corners[Math.floor(Math.random() * corners.length)];
+    return { row: randomCorner.y, cell: randomCorner.x };
   }
 
-  if (playState.board[y][0] == 1 && playState.board[y][last - 1] == 1) {
-    //Vertical
-    position.row = y;
-    position.cell = last;
-  }
-  if (playState.board[y][last] == 1 && playState.board[y][last - 1] == 1) {
-    position.row = y;
-    position.cell = 0;
-  }
-  if (playState.board[y][last] == 1 && playState.board[y][0] == 1) {
-    position.row = y;
-    position.cell = last - 1;
-  }
-
-  if (playState.board[0][x] == 1 && playState.board[last - 1][x] == 1) {
-    //horizontal
-    position.row = last;
-    position.cell = x;
-  }
-  if (playState.board[last][x] == 1 && playState.board[last - 1][x] == 1) {
-    position.row = 0;
-    position.cell = x;
-  }
-
-  if (playState.board[last][x] == 1 && playState.board[0][x] == 1) {
-    position.row = last - 1;
-    position.cell = x;
-  }
-
-  //una ficha
-  if (position.row == -1 && position.cell == -1) {
-    if (playState.board[0][0] === playState.board[y][x]) {
-      position.row = last - 1;
-      position.cell = last;
-    }
-    if (playState.board[last][last - 1] === playState.board[y][x]) {
-      position.row = 0;
-      position.cell = last - 1;
-    }
-    if (playState.board[last - 1][0] === playState.board[y][x]) {
-      position.row = last;
-      position.cell = last;
-    }
-    if (playState.board[last][last] === playState.board[y][x]) {
-      position.row = last;
-      position.cell = 0;
-    }
-    if (playState.board[0][last] === playState.board[y][x]) {
-      position.row = 0;
-      position.cell = last - 1;
-    }
-    if (playState.board[last][0] === playState.board[y][x]) {
-      position.row = last - 1;
-      position.cell = last - 1;
-    }
-    if (playState.board[last - 1][last - 1] === playState.board[y][x]) {
-      position.row = last - 1;
-      position.cell = 0;
-    }
-    if (playState.board[0][last - 1] === playState.board[y][x]) {
-      position.row = last;
-      position.cell = 0;
-    }
-    if (playState.board[last - 1][last] === playState.board[y][x]) {
-      position.row = 0;
-      position.cell = 0;
-    }
-  } else if (playState.board[position.row][position.cell] == 2) {
-    playState.board.forEach((e, i) => {
-      e.forEach((c, j) => {
-        if (playState.board[i][j] == 0) {
-          position.row = i;
-          position.cell = j;
-        }
-      });
-    });
-  }
-
-  return position;
+  // E. Cualquier celda libre
+  const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+  return { row: randomCell.y, cell: randomCell.x };
 }
 
+// Función auxiliar necesaria para que la IA "piense" sin disparar eventos de victoria reales
+function checkVirtualWin(y, x, p) {
+  const b = playState.board;
+  // Horizontal
+  if (b[y].every(cell => cell === p)) return true;
+  // Vertical
+  if (b.every(row => row[x] === p)) return true;
+  // Diagonales
+  if (y === x && b.every((row, i) => row[i] === p)) return true;
+  if (y + x === 2 && b.every((row, i) => row[2 - i] === p)) return true;
+  return false;
+}
 function play(x, y) {
   if (
     playState.board[y][x] == "" &&
@@ -370,12 +305,12 @@ function play(x, y) {
         }
       }, 2000);
     } else {
-      dispatch("CHANGE_TURN");
-      if (playState.multiplayer == 2) {
-        dispatch("ADD_NUM_MOVES");
-      } else if (playState.activePlayer == 2) {
-        const { row, cell } = nextPlay(y, x);
-        play(cell, row);
+     dispatch("CHANGE_TURN");
+      if (playState.multiplayer == 1 && playState.activePlayer == 2) {
+          setTimeout(() => {
+              const { row, cell } = nextPlay();
+              play(cell, row);
+          }, 600); // 0.6 segundos para que parezca que está "pensando"
       }
       if (
         players[playState.activePlayer].state["play" + playState.numPlays].name
