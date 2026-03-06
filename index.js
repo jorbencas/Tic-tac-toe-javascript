@@ -184,20 +184,15 @@ function isEndByTie() {
 
 function resetBoard() {
   dispatch("CREATE_BOARD", { rows: win, cells: win });
+  // Eliminamos el div 'row' para que todas las celdas sean hijos directos de .board
   $id("board").innerHTML = playState.board
-    .map((e, y) => {
-      return (
-        `<div class='row'>` +
-        e
-          .map((f, x) => {
-            return `
-      <div class='cell' id='${y}-${x}' onclick='play(${x},${y})'>${f}</div>`;
-          })
-          .join("") +
-        `</div>`
-      );
-    })
-    .join("");
+    .flatMap((row, y) => 
+      row.map((f, x) => `
+        <div class='cell' id='${y}-${x}' onclick='play(${x},${y})'>
+          ${f !== "" ? `<img src="${players[f].icon}.svg">` : ""}
+        </div>`
+      )
+    ).join("");
 }
 
 function nextPlay(y, x) {
