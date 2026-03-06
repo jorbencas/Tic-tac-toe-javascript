@@ -1,77 +1,61 @@
-:root {
-    --bg: #050505;
-    --card-bg: #0f0f0f;
-    --input-bg: #161616;
-    --accent: #00e5ff;
-    --win: #00e676;
-    --lose: #ff1744;
-    --tie: #78909c;
+/* Layout Base */
+.layout-wrapper {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    min-height: 100vh;
+    background-color: #f4f7f6;
 }
 
-body {
-    background-color: var(--bg);
+/* Columna Lateral (25%) */
+.panel-lateral {
+    flex: 0 0 300px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* Columna Tablero (75%) */
+.contenedor-tablero {
+    flex: 1;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* EL ESTADO DESACTIVADO (Importante) */
+.tablero-wrapper.desactivado {
+    position: relative;
+    opacity: 0.5;
+    pointer-events: none; /* Bloquea clics y scroll interno */
+    filter: grayscale(100%);
+    user-select: none;
+}
+
+/* Overlay opcional para reforzar el bloqueo visual */
+.tablero-wrapper.desactivado::after {
+    content: "TABLERO BLOQUEADO";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.7);
     color: white;
-    font-family: 'Inter', sans-serif;
-    margin: 0; min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    z-index: 10;
 }
 
-.main-title { font-size: 0.6rem; letter-spacing: 15px; opacity: 0.2; margin: 40px 0; font-weight: 300; }
+/* Tablas */
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+th { background: #f8f9fa; }
 
-/* DISEÑO 2 COLUMNAS */
-.main-layout {
-    display: flex; gap: 40px; width: 100%; max-width: 1100px;
-    padding: 20px; align-items: stretch;
-}
-
-.left-column { flex: 1; max-width: 400px; }
-.right-column { flex: 1.5; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.01); border-radius: 20px; }
-
-/* INPUTS OSCUROS Y GRANDES */
-.big-input {
-    width: 100%; padding: 20px; background: var(--input-bg); border: 1px solid #222;
-    color: white; border-radius: 10px; font-size: 1rem; margin-bottom: 15px; outline: none;
-}
-
-/* SELECTOR DE PIEZA (TARJETAS GRANDES) */
-.piece-grid { display: flex; gap: 15px; margin-top: 10px; }
-.piece-card {
-    flex: 1; background: var(--card-bg); border: 2px solid #222; border-radius: 15px;
-    padding: 30px 10px; cursor: pointer; text-align: center; transition: 0.3s;
-}
-.piece-card img { width: 45px; height: 45px; opacity: 0.1; filter: grayscale(1); margin-bottom: 10px; }
-.piece-card span { display: block; font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; opacity: 0.4; }
-
-.piece-card.active { border-color: var(--accent); background: rgba(0,229,255,0.03); }
-.piece-card.active img { opacity: 1; filter: none; transform: translateY(-5px); }
-.piece-card.active span { opacity: 1; color: var(--accent); }
-
-/* TABLERO FIJO 150PX */
-.board { display: grid; grid-template-columns: repeat(3, 150px); grid-template-rows: repeat(3, 150px); gap: 15px; }
-.cell {
-    background: var(--card-bg); width: 150px; height: 150px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.03);
-}
-.cell img { width: 80px; height: 80px; }
-
-/* BOTÓN EMPEZAR */
-.mega-btn {
-    width: 100%; padding: 22px; background: white; color: black; border: none;
-    font-weight: 900; border-radius: 10px; cursor: pointer; margin-top: 20px;
-}
-
-/* MARCADOR LATERAL */
-.player-status { background: var(--card-bg); padding: 25px; border-radius: 15px; border: 1px solid #222; margin-bottom: 10px; }
-.player-status.active { border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.side-icon { width: 25px; vertical-align: middle; margin-right: 10px; }
-.pts { font-weight: 900; font-size: 1.2rem; margin-top: 15px; color: var(--accent); }
-
-/* RESUMEN FINAL G-E-P */
-.res-dot {
-    width: 45px; height: 45px; border-radius: 50%; border: 3px solid;
-    display: inline-flex; align-items: center; justify-content: center; font-weight: 900; margin: 5px;
-}
-.res-dot.G { border-color: var(--win); color: var(--win); }
-.res-dot.P { border-color: var(--lose); color: var(--lose); }
-.res-dot.E { border-color: var(--tie); color: var(--tie); }
+/* Botones */
+button { width: 100%; padding: 10px; margin-bottom: 10px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
+.btn-danger { background: #e74c3c; color: white; }
+.btn-success { background: #2ecc71; color: white; }
+.btn-secundario { background: #3498db; color: white; }

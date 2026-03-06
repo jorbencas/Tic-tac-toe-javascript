@@ -3,82 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3 en Raya Pro</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Sistema de Gestión Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
-<body class="is-setting-up">
-    <h1 class="main-title">3 EN RAYA</h1>
+<body>
 
-    <main id="game-container" class="main-layout">
-        <aside class="left-column">
-            <div id="setup-panel" class="config-container">
-                <div class="input-group">
-                    <label class="label-tiny">MODO DE JUEGO</label>
-                    <select onchange="cambiarModo(this.value)" id="multiplayer" class="big-input">
-                        <option value="1">👤 VS IA GEMINI</option>
-                        <option value="2">👥 DOS JUGADORES</option>
-                    </select>
-                </div>
-
-                <div id="piece-selector" class="input-group">
-                    <label class="label-tiny">ELIGE TU BANDO</label>
-                    <div class="piece-grid">
-                        <div class="piece-card active" id="btn-cross" onclick="seleccionarPieza('cross', this)">
-                            <img src="cross.svg">
-                            <span>EQUIS</span>
-                        </div>
-                        <div class="piece-card" id="btn-circle" onclick="seleccionarPieza('circle', this)">
-                            <img src="circle.svg">
-                            <span>CÍRCULO</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="name-inputs" class="input-group" style="display:none;">
-                    <input type="text" id="n1" class="big-input" placeholder="Nombre Jugador 1">
-                    <input type="text" id="n2" class="big-input" placeholder="Nombre Jugador 2">
-                </div>
-
-                <button class="mega-btn" onclick="confirmarInicio()">EMPEZAR SERIE</button>
+    <div class="layout-wrapper">
+        <aside class="panel-lateral">
+            <h2>Configuración</h2>
+            <div class="card-control">
+                <p>Estado: <span id="estado-label">ACTIVO</span></p>
+                <button id="btn-toggle" class="btn-danger">Desactivar Tablero</button>
             </div>
-
-            <div id="scoreboard" class="score-container" style="display:none;">
-                <div id="p1" class="player-status active">
-                    <div class="status-top">
-                        <img src="cross.svg" id="icon-1" class="side-icon">
-                        <span id="name-1">Jugador 1</span>
-                    </div>
-                    <div class="pts"><span id="wins-1">0</span> VICTORIAS</div>
-                </div>
-                
-                <div class="vs-badge">VS</div>
-
-                <div id="p2" class="player-status">
-                    <div class="status-top">
-                        <img src="circle.svg" id="icon-2" class="side-icon">
-                        <span id="name-2">IA</span>
-                    </div>
-                    <div class="pts"><span id="wins-2">0</span> VICTORIAS</div>
-                </div>
+            
+            <div class="card-control">
+                <h3>Acciones de Datos</h3>
+                <button id="btn-add" class="btn-secundario">Añadir Fila</button>
+                <button id="btn-clear" class="btn-outline">Limpiar Consola</button>
             </div>
         </aside>
 
-        <section class="right-column">
-            <div class="board-frame">
-                <div class="board" id="board">
-                    </div>
-                <div id="round-info" class="round-display">ESPERANDO INICIO...</div>
+        <main class="contenedor-tablero">
+            <header class="header-tablero">
+                <h1>Tablero de Operaciones</h1>
+                <input type="text" id="buscador" placeholder="Filtrar registros...">
+            </header>
+
+            <div id="tablero-interactivo" class="tablero-wrapper">
+                <table id="tabla-principal">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Usuario</th>
+                            <th>Actividad</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo-tabla">
+                        </tbody>
+                </table>
             </div>
-        </section>
-    </main>
-
-    <section id="final-summary" class="summary-full" style="display:none;"></section>
-
-    <div id="toast" class="toast-card">
-        <p id="toast-sub"></p>
-        <h1 id="toast-main"></h1>
+        </main>
     </div>
 
-    <script src="index.js"></script>
 </body>
 </html>
